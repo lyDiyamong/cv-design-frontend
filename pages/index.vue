@@ -1,3 +1,4 @@
+import { NuxtLink } from '../.nuxt/components';
 <template>
     <h2 class="text">Welcome to QuickCV</h2>
     <a-form class="login-form">
@@ -19,10 +20,10 @@
             </a-button>
         </a-form-item>
     </a-form>
-    <div class="bottom-text">
+    <div class="flex-center">
         <p>
             Don't have an account?
-            <span class="signup-link"><a-link ref="/signup">Sign up</a-link></span>
+            <span class="signup-link"><NuxtLink href="/signup">Sign up</NuxtLink></span>
         </p>
     </div>
 </template>

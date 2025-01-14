@@ -57,11 +57,30 @@
         color: inherit;
     }
 
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
     /* Border Box Example Styling */
     .ant-btn,
     .ant-card,
     .ant-input {
         border-radius: var(--border-radius, 6px);
         font-family: inherit;
+    }
+
+    .flex-between {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+    }
+    .flex-center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .full-width {
+        width: 100%;
     }
 </style>
