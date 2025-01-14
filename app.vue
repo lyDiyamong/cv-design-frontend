@@ -10,7 +10,7 @@
 
     const themeConfig = {
         token: {
-            colorPrimary: "#1DA57A",
+            colorPrimary: "#ff9d3d",
             borderRadius: "6px", // Global border radius
         },
     };
@@ -40,7 +40,9 @@
         font-size: var(--font-size-md, 14px);
         line-height: 1.6;
         color: #333;
-        background-color: #f9f9f9; /* Neutral background color */
+        background-color: var(
+            --color-background-default
+        ); /* Neutral background color */
     }
 
     /* Ant Design Typography Global Styling */

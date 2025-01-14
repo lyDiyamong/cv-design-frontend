@@ -1,13 +1,21 @@
 <template>
-    <h1>Default layout</h1>
-    <NuxtPage />
+    <main class="auth-layout">
+        <NuxtImg src="/images/logo.png" width="45" alt="Logo img" />
+        <NuxtPage />
+    </main>
 </template>
 
 <script setup>
-    const themeConfig = {
-        token: {
-            colorPrimary: "#1DA57A",
-            borderRadius: "6px",
-        },
-    };
 </script>
+
+<style scoped>
+.auth-layout {
+    max-width: 500px;
+    width: 100%;
+    margin: 150px auto;
+    padding: 42px;
+    background-color: white;
+    border-radius: var(--border-radius-section);
+}
+
+</style>

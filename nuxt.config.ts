@@ -4,8 +4,9 @@ export default defineNuxtConfig({
     devtools: { enabled: true },
 
     plugins: ["~/plugins/ant-design-vue.ts"],
+    modules: ["@nuxt/image"],
     //  Ant Design Vue styles
-    css: ["ant-design-vue/dist/reset.css", '@/assets/styles/global.css'],
+    css: ["ant-design-vue/dist/reset.css", "@/assets/styles/global.css"],
     vite: {
         css: {
             preprocessorOptions: {
@@ -13,7 +14,7 @@ export default defineNuxtConfig({
                     javascriptEnabled: true,
                     modifyVars: {
                         // Custom Less variables for Ant Design (example)
-                        "primary-color": "#1DA57A",
+                        "primary-color": "#ff9d3d",
                         "link-color": "#1890ff",
                         "border-radius-base": "4px",
                     },
