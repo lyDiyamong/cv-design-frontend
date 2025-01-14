@@ -53,10 +53,12 @@
         </a-form-item>
     </a-form>
     <div class="bottom-text">
-        <p>
+        <a-typography-text>
             Already have an account?
-            <span class="signup-link"><a-link ref="/">Log in</a-link></span>
-        </p>
+            <a-typography-link href="/" >
+                Log in
+            </a-typography-link>
+        </a-typography-text>
     </div>
 </template>
 

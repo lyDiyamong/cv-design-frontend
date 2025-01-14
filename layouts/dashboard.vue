@@ -6,9 +6,9 @@
         <!-- Main content area -->
         <a-layout>
             <!-- Optionally add a header -->
-            <!-- <a-layout-header>
-                    <div>Header</div>
-                </a-layout-header> -->
+            <a-layout-header style="background: white">
+                <Header />
+            </a-layout-header>
 
             <!-- Content area -->
             <a-layout-content style="padding: 24px">
@@ -24,4 +24,9 @@
 
 <style scoped>
     /* Add custom styling for layout, if necessary */
+    .ant-layout-header {
+        display: flex;
+        align-items: center;
+        justify-content: end;
+    }
 </style>

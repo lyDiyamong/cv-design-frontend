@@ -1,6 +1,6 @@
 <template>
-    <div>This is the dashboard</div>
-    <a-button type="primary" >New Button</a-button>
+    <a-page-header title="Dashboard" />
+    <Greeting last-name="Diyamong" />
 </template>
 
 <script lang="ts" setup>
@@ -9,4 +9,9 @@
     });
 </script>
 
-<style></style>
+<style>
+    .greeting-card {
+        border: 1px solid rgb(235, 237, 240);
+        background-color: var(--color-primary-light);
+    }
+</style>

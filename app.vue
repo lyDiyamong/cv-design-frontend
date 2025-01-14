@@ -8,11 +8,15 @@
 <script setup>
     import { ConfigProvider } from "ant-design-vue";
 
+    // Override Ant Design Vue theme with a light mode configuration
     const themeConfig = {
         token: {
-            colorPrimary: "#ff9d3d",
+            colorPrimary: "#ff9d3d", // Your custom primary color
             borderRadius: "6px", // Global border radius
+            typographyMarginBottom: 0
         },
+        // Force light mode by default
+        theme: "light", // Specify "light" explicitly to disable dark mode
     };
 </script>
 
@@ -69,6 +73,7 @@
         border-radius: var(--border-radius, 6px);
         font-family: inherit;
     }
+
     .ant-layout-sider-trigger {
         background: white;
     }
@@ -76,6 +81,7 @@
     .flex-between {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         gap: 8px;
     }
     .flex-center {
