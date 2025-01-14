@@ -69,6 +69,9 @@
         border-radius: var(--border-radius, 6px);
         font-family: inherit;
     }
+    .ant-layout-sider-trigger {
+        background: white;
+    }
 
     .flex-between {
         display: flex;

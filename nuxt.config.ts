@@ -23,6 +23,11 @@ export default defineNuxtConfig({
         },
     },
 
+    components: [
+        { path: "~/components/Dashboard/", pathPrefix: false },
+        { path: "~/components/Form/", pathPrefix: false }, 
+    ],
+
     app: {
         head: {
             link: [
