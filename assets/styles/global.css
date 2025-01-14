@@ -1,0 +1,89 @@
+/* global.css */
+:root {
+    /* Primary Colors */
+    --color-primary-main: #ff9d3d;
+    --color-primary-semi-light: #ffec9e;
+    --color-primary-light: #ffbd73;
+    --color-primary-contrast-text: #0c0c0c;
+
+    /* Secondary Colors */
+    --color-secondary-main: #004385;
+    --color-secondary-light: #65a9ed;
+    --color-secondary-dark: #1869b8;
+    --color-secondary-contrast-text: #adadad;
+
+    /* Text Colors */
+    --color-text-primary: #0c0c0c;
+    --color-text-secondary: #637381;
+    --color-text-disabled: #707070;
+
+    /* Background Colors */
+    --color-background-default: #f9fbff;
+    --color-background-secondary: #f5f7f8;
+    --color-background-success: #e7f0dc;
+    --color-background-error: #ffeadd;
+
+    /* Divider and Border Colors */
+    --color-divider: #e2e2e2;
+
+    /* Custom Colors */
+    --color-purple-100: #e2e2e2;
+    --color-purple-200: #944cff;
+    --color-green-100: #f4f7ed;
+    --color-green-200: #b3e4b0;
+    --color-green-300: #0ba800;
+    --color-green-400: #0b9710;
+    --color-red-100: #ffebee;
+    --color-red-200: #ff3838;
+    --color-red-300: #e63232;
+    --color-red-400: #cc2d2d;
+    --color-gray-100: rgba(178, 178, 178, 0.1);
+    --color-gray-200: #e2e2e2;
+    --color-gray-300: #adadad;
+    --color-gray-500: #637381;
+    --color-gray-600: #1f1c2e;
+    --color-white: #ffffff;
+
+    /* Shadows */
+    --shadow-default: #e2e2e2 0px 4px 10px;
+
+    /* Font Family */
+    --font-family-primary: "Montserrat", Arial, sans-serif;
+    
+    /* Typography Sizes */
+    --font-size-h1: 2.5rem;
+    --font-size-h2: 2rem;
+    --font-size-h3: 1.5rem;
+    --font-size-h4: 1.125rem;
+    --font-size-h5: 1rem;
+    --font-size-h6: 0.875rem;
+    --font-size-body1: 1rem;
+    --font-size-body2: 0.875rem;
+    --font-size-body3: 0.75rem;
+
+    /* Font Weights */
+    --font-weight-default: 400;
+    --font-weight-semi-bold: 500;
+    --font-weight-bold: 600;
+    --font-weight-extra-bold: 700;
+
+    /* Border Radius */
+    --border-radius-default: 8px;
+    --border-radius-input: 8px;
+    --border-radius-card: 12px;
+    --border-radius-section: 16px;
+    --border-radius-btn: 100px;
+
+    /* Action Colors */
+    --color-action-hover: #e5f3ff;
+    --color-action-selected: #c7e4ff;
+    --color-action-error: #fff2f2;
+
+    /* Breakpoints */
+    --breakpoint-xss: 0;
+    --breakpoint-xs: 320px;
+    --breakpoint-sm: 600px;
+    --breakpoint-md: 900px;
+    --breakpoint-lg: 1200px;
+    --breakpoint-xl: 1920px;
+}
