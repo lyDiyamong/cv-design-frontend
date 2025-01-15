@@ -12,6 +12,7 @@
             <!-- Educations -->
             <Educations />
             <!-- Skills -->
+            <Skills />
             <!-- Languages -->
             <!-- References -->
         </section>
