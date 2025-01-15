@@ -1,5 +1,21 @@
 <template>
-    <div>hello</div>
+    <!-- <a-page-header title="Edit Resume" /> -->
+
+    <section class="edit-resume-container">
+        <section class="form-container">
+            <!-- Personal -->
+            <PersonalResume />
+            <!-- Summary -->
+            <Summary />
+            <!-- Experiences -->
+            <Experiences />
+            <!-- Educations -->
+            <!-- Skills -->
+            <!-- Languages -->
+            <!-- References -->
+        </section>
+        <section class="preview-resume-container"></section>
+    </section>
 </template>
 
 <script lang="ts" setup>
@@ -13,4 +29,8 @@
     console.log(route.params.id);
 </script>
 
-<style></style>
+<style>
+    .edit-resume-container {
+        display: flex;
+    }
+</style>

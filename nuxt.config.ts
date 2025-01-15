@@ -3,7 +3,7 @@ export default defineNuxtConfig({
     compatibilityDate: "2024-11-01",
     devtools: { enabled: true },
 
-    plugins: ["~/plugins/ant-design-vue.ts"],
+    plugins: ["~/plugins/ant-design-vue.ts", "~/plugins/vee-validate.ts"],
     modules: ["@nuxt/image"],
     //  Ant Design Vue styles
     css: ["ant-design-vue/dist/reset.css", "@/assets/styles/global.css"],
@@ -25,8 +25,9 @@ export default defineNuxtConfig({
 
     components: [
         { path: "~/components/Dashboard/", pathPrefix: false },
-        { path: "~/components/Form/", pathPrefix: false }, 
-        { path: "~/components/Resume/", pathPrefix: false }, 
+        { path: "~/components/Form/", pathPrefix: false },
+        { path: "~/components/Resume/", pathPrefix: false },
+        { path: "~/components/EditResume/", pathPrefix: false },
     ],
 
     app: {
@@ -38,5 +39,11 @@ export default defineNuxtConfig({
                 },
             ],
         },
+    },
+    build: {
+        transpile: ["vee-validate/dist/rules"],
+    },
+    typescript: {
+        strict: true,
     },
 });
