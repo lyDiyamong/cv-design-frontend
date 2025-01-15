@@ -2,11 +2,11 @@
     <a-typography-title style="font-size: var(--font-size-h4)">
         Personal Information
     </a-typography-title>
-    <form @submit.prevent="handleSubmit(onSubmit)">
+    <form @submit.prevent="onSubmit">
         <a-form layout="vertical">
             <Input
                 name="position"
-                label="First Name"
+                label="Position"
                 placeholder="Enter position"
             />
             <div class="flex-between">
@@ -33,25 +33,41 @@
                     placeholder="Enter your phone number"
                 />
             </div>
+            <TextArea
+                name="summary"
+                label="Summary"
+                placeholder="Enter your summary"
+            />
         </a-form>
+        <a-button type="primary" html-type="submit">Submit</a-button>
     </form>
 </template>
 
 <script lang="ts" setup>
     import { useForm } from "vee-validate";
+    import { toFieldValidator } from "@vee-validate/zod";
     import * as z from "zod";
 
     const schema = z.object({
-        name: z.string().min(3, "Name must be at least 3 characters long"),
-        email: z.string().email("Invalid email address"),
+        firstName: z.string().min(1, "First name is required"),
+        lastName: z.string().min(1, "Last name is required"),
+        position: z.string().min(1, "Position is required"),
+        email: z.string().email("Invalid email"),
+        phone: z.string().min(1, "Phone number is required"),
+        summary: z
+            .string()
+            .min(1, "Summary is required")
+            .max(450, "Max character is 450")
+            .optional(),
     });
 
+    const zodResolver = toFieldValidator(schema);
     type FormSchema = z.infer<typeof schema>;
-    const { handleSubmit } = useForm<FormSchema>({
-        validationSchema: schema,
+    const { handleSubmit, values } = useForm<FormSchema>({
+        validationSchema: zodResolver,
     });
 
-    const onSubmit = (values: FormSchema) => {
-        console.log("Form submitted with values:", values);
-    };
+    const onSubmit = handleSubmit((formValues) => {
+        console.log("Form submitted with values:", formValues);
+    });
 </script>

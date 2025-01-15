@@ -1,16 +1,17 @@
 <template>
     <a-form-item
-    class="full-width"
+        class="full-width"
         :label="label"
         :validate-status="validationStatus"
         :help="error"
     >
-        <a-input
-        class="full-width"
+        <a-textarea
+            class="full-width"
             v-model="inputValue"
             @input="handleInput"
             :placeholder="placeholder"
             @blur="handleBlur"
+            :auto-size="{ minRows: 3, maxRows: 5 }"
         />
     </a-form-item>
 </template>
@@ -31,7 +32,8 @@
         value: inputValue,
         errorMessage,
         handleBlur,
-        setValue
+        setValue,
+        meta,
     } = useField(props.name);
 
     const error = computed(() => errorMessage.value);
@@ -41,7 +43,13 @@
     });
 
     const handleInput = (e: Event) => {
-        const target = e.target as HTMLInputElement;
+        const target = e.target as HTMLTextAreaElement;
         setValue(target.value);
     };
 </script>
+
+<style scoped>
+    .full-width {
+        width: 100%;
+    }
+</style>
