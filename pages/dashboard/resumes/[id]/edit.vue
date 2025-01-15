@@ -16,6 +16,7 @@
             <!-- Languages -->
             <Languages />
             <!-- References -->
+            <References />
         </section>
         <section class="preview-resume-container"></section>
     </section>
