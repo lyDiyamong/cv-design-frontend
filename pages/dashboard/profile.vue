@@ -1,13 +1,11 @@
 <template>
-  <div>
-    Resume Page
-  </div>
+    <div>Resume Page</div>
 </template>
 
 <script lang="ts" setup>
-
+    definePageMeta({
+        layout: "dashboard",
+    });
 </script>
 
-<style>
-
-</style>
+<style></style>

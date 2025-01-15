@@ -52,8 +52,8 @@
             icon: AppstoreOutlined,
             path: "/dashboard",
         },
-        { key: "2", name: "Resume", icon: FolderOutlined, path: "/resume" },
-        { key: "3", name: "Profile", icon: UserOutlined, path: "/profile" },
+        { key: "2", name: "Resume", icon: FolderOutlined, path: "/dashboard/resumes" },
+        { key: "3", name: "Profile", icon: UserOutlined, path: "/dashboard/profile" },
         { key: "4", name: "Logout", icon: LogoutOutlined, path: "/" },
     ];
 </script>
