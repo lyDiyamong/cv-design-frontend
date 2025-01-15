@@ -14,6 +14,7 @@
             <!-- Skills -->
             <Skills />
             <!-- Languages -->
+            <Languages />
             <!-- References -->
         </section>
         <section class="preview-resume-container"></section>
