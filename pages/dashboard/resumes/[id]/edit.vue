@@ -10,6 +10,7 @@
             <!-- Experiences -->
             <Experiences />
             <!-- Educations -->
+            <Educations />
             <!-- Skills -->
             <!-- Languages -->
             <!-- References -->

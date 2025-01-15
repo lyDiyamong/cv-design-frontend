@@ -1,10 +1,12 @@
 <template>
     <a-form-item
+    class="full-width"
         :label="label"
         :validate-status="validationStatus"
         :help="error"
     >
         <a-input
+        class="full-width"
             :value="inputValue"
             @input="handleInput"
             :placeholder="placeholder"
