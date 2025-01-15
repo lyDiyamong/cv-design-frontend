@@ -34,7 +34,6 @@
                 />
             </div>
         </a-form>
-        <a-button type="primary" html-type="submit">Submit</a-button>
     </form>
 </template>
 

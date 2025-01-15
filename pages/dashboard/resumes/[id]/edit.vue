@@ -7,22 +7,24 @@
 
     <section class="edit-resume-container">
         <section class="form-container">
-            <!-- Upload image -->
-            <UploadImage />
-            <!-- Personal -->
-            <PersonalResume />
-            <!-- Summary -->
-            <Summary />
-            <!-- Experiences -->
-            <Experiences />
-            <!-- Educations -->
-            <Educations />
-            <!-- Skills -->
-            <Skills />
-            <!-- Languages -->
-            <Languages />
-            <!-- References -->
-            <References />
+            <a-form layout="vertical">
+                <!-- Upload image -->
+                <UploadImage />
+                <!-- Personal -->
+                <PersonalResume />
+                <!-- Summary -->
+                <Summary />
+                <!-- Experiences -->
+                <Experiences />
+                <!-- Educations -->
+                <Educations />
+                <!-- Skills -->
+                <Skills />
+                <!-- Languages -->
+                <Languages />
+                <!-- References -->
+                <References />
+            </a-form>
         </section>
         <section class="preview-resume-container"></section>
     </section>

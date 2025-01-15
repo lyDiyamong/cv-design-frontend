@@ -2,16 +2,15 @@
     <a-typography-title style="font-size: var(--font-size-h4)">
         Skills
     </a-typography-title>
-    <a-form layout="vertical">
-        <div class="flex-between">
-            <Input
-                name="name"
-                label="Skill name"
-                placeholder="Enter skill name"
-            />
-            <SelectInput placeholder="Choose your level" label="Level" :options="options" />
-        </div>
-    </a-form>
+
+    <div class="flex-between">
+        <Input name="name" label="Skill name" placeholder="Enter skill name" />
+        <SelectInput
+            placeholder="Choose your level"
+            label="Level"
+            :options="options"
+        />
+    </div>
 </template>
 
 <script lang="ts" setup>
