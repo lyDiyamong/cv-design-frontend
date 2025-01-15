@@ -1,24 +1,22 @@
 <template>
-    <div class="resume-card-container">
-        <a-card hoverable class="resume-card">
-            <template #cover>
-                <!-- Image Section -->
-                <NuxtImg
-                    :src="previewImg"
-                    alt="Professional CV Resume"
-                    layout="responsive"
-                    width="1000"
-                    height="1200"
-                    class="resume-image"
-                />
-            </template>
-        </a-card>
-        <!-- Card Footer -->
-        <div class="card-footer">
-            <a-typogragphy-text class="resume-title">{{
-                title
-            }}</a-typogragphy-text>
-        </div>
+    <a-card hoverable class="resume-card">
+        <template #cover>
+            <!-- Image Section -->
+            <NuxtImg
+                :src="previewImg"
+                alt="Professional CV Resume"
+                layout="responsive"
+                width="1000"
+                height="1200"
+                class="resume-image"
+            />
+        </template>
+    </a-card>
+    <!-- Card Footer -->
+    <div class="card-footer">
+        <a-typogragphy-text class="resume-title">{{
+            title
+        }}</a-typogragphy-text>
     </div>
 </template>
 
@@ -30,9 +28,6 @@
 </script>
 
 <style scoped>
-    .resume-card-container {
-        padding: 0 16px;
-    }
     .resume-card {
         display: flex;
         flex-direction: column;
@@ -52,6 +47,12 @@
     .card-footer {
         margin-top: 8px;
         padding: 0 8px;
+    }
+    .resume-title {
+        color: #333;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; /* Truncate text if it's too long */
     }
 
     /* Responsive Scaling */

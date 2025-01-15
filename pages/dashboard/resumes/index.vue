@@ -1,5 +1,13 @@
 <template>
-    <a-page-header title="Resumes" />
+    <div class="resumes-page-container">
+        <a-page-header title="Resumes" />
+        <a-button
+            type="primary"
+            :icon="h(PlusOutlined)"
+        >
+            New Resume
+        </a-button>
+    </div>
     <a-row :gutter="[48, 16]">
         <a-col
             :xs="24"
@@ -29,6 +37,8 @@
 
 <script lang="ts" setup>
     import { ref, computed } from "vue";
+    import { h } from "vue";
+    import { PlusOutlined } from "@ant-design/icons-vue";
 
     definePageMeta({
         layout: "dashboard",
@@ -107,5 +117,11 @@
     .pagination-container {
         margin-top: 24px;
         text-align: center;
+    }
+    .resumes-page-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
     }
 </style>

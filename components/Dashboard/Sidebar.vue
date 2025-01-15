@@ -8,7 +8,7 @@
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
     >
-        <div class="logo">CVs</div>
+        <div class="logo">QuickCV</div>
         <a-menu theme="light" mode="inline" :defaultSelectedKeys="['1']">
             <a-menu-item
                 v-for="(item) in menuItems"
@@ -66,7 +66,7 @@
 
     .logo {
         text-align: center;
-        color: black;
+        color: var(--color-primary-main);
         font-size: 1.125rem;
         font-weight: 600;
         padding-top: 1rem;
