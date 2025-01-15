@@ -3,6 +3,8 @@
 
     <section class="edit-resume-container">
         <section class="form-container">
+            <!-- Upload image -->
+            <UploadImage />
             <!-- Personal -->
             <PersonalResume />
             <!-- Summary -->
