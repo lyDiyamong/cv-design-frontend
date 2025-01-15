@@ -1,38 +1,38 @@
 <template>
-    <div class="resumes-page-container">
+    <div class="flex-between">
         <a-page-header title="Resumes" />
-        <a-button
-            type="primary"
-            :icon="h(PlusOutlined)"
-        >
-            New Resume
-        </a-button>
+        <a-button type="primary" :icon="h(PlusOutlined)"> New Resume </a-button>
     </div>
-    <a-row :gutter="[48, 16]">
-        <a-col
-            :xs="24"
-            :sm="12"
-            :md="8"
-            :lg="6"
-            :xl="4"
-            v-for="resume in currentItems"
-            :key="resume.id"
-        >
-            <ResumeCard :preview-img="resume.imgUrl" :title="resume.title" />
-        </a-col>
-    </a-row>
+    <section class="resumes-page-container">
+        <a-row :gutter="[48, 16]">
+            <a-col
+                :xs="24"
+                :sm="12"
+                :md="8"
+                :lg="6"
+                :xl="4"
+                v-for="resume in currentItems"
+                :key="resume.id"
+            >
+                <ResumeCard
+                    :preview-img="resume.imgUrl"
+                    :title="resume.title"
+                />
+            </a-col>
+        </a-row>
 
-    <div class="pagination-container">
-        <a-pagination
-            v-model:current="currentPage"
-            :total="totalItems"
-            :pageSize="pageSize"
-            show-quick-jumper
-            show-size-changer
-            :pageSizeOptions="['8', '16', '24', '32']"
-            @change="handlePageChange"
-        />
-    </div>
+        <div class="pagination-container">
+            <a-pagination
+                v-model:current="currentPage"
+                :total="totalItems"
+                :pageSize="pageSize"
+                show-quick-jumper
+                show-size-changer
+                :pageSizeOptions="['8', '16', '24', '32']"
+                @change="handlePageChange"
+            />
+        </div>
+    </section>
 </template>
 
 <script lang="ts" setup>
@@ -119,9 +119,6 @@
         text-align: center;
     }
     .resumes-page-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
+        padding: 16px 24px;
     }
 </style>

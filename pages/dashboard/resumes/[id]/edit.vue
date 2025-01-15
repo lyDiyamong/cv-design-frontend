@@ -1,5 +1,9 @@
 <template>
-    <!-- <a-page-header title="Edit Resume" /> -->
+    <a-page-header
+        style="border: 2px solid rgb(235, 237, 240)"
+        title="Edit Resume"
+        :breadcrumb="{ routes }"
+    />
 
     <section class="edit-resume-container">
         <section class="form-container">
@@ -29,14 +33,26 @@
         layout: "dashboard",
     });
 
-    const route = useRoute();
+    const routes = [
+        {
+            path: "/dashboard/resumes",
+            breadcrumbName: "Resumes",
+        },
+        {
+            path: "/dashboard/resumes/",
+            breadcrumbName: "Edit Resume",
+        },
+    ];
 
     // When accessing /posts/1, route.params.id will be 1
-    console.log(route.params.id);
+    // console.log(route.params.id);
 </script>
 
 <style>
     .edit-resume-container {
+        margin-top: 32px;
         display: flex;
+        padding: 16px 24px;
+        border: 2px solid rgb(235, 237, 240);
     }
 </style>
