@@ -1,57 +1,41 @@
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import { useAuthStore } from "~/store/auth";
-import type { AuthResponse, LoginCredentials, User } from "~/types/auth";
+import type { JsonResponseType } from "~/types/json";
+import type { AuthResponse, LoginType } from "~/types/auth";
 
-// composables/useAuth.ts
+
 export const useAuth = () => {
     const { $api } = useNuxtApp();
-    const auth = useAuthStore();
-    const error = ref<string | null>(null);
+    const authStore = useAuthStore();
+    const queryClient = useQueryClient();
 
-    const login = async (credentials: LoginCredentials) => {
-        try {
-            const { data } = await $api.post<AuthResponse>(
-                "/auth/login",
-                credentials
-            );
-            auth.setAuth(data.user, data.tokens);
-            const userData = await getCurrentUser();
-            if (userData) await navigateTo("/dashboard");
-        } catch (err) {
-            error.value = "Login failed";
-            throw err;
-        }
-    };
+    const loginMutation = useMutation({
+        mutationFn: async (credentials: LoginType) => {
+            const response = await $api.post("/auth/login", credentials);
+            return response.data as JsonResponseType<AuthResponse>;
+        },
+        onSuccess: ({ data }) => {
+            authStore.setAuth(data.user, data.tokens);
+        },
+        onError: (error) => {
+            console.error("Login failed", error);
+        },
+    });
 
-    const logout = async () => {
-        try {
-            if (auth.tokens?.refreshToken) {
-                await $api.post("/auth/logout", {
-                    refreshToken: auth.tokens.refreshToken,
-                });
-            }
-        } finally {
-            auth.clearAuth();
-            await navigateTo("/login");
-        }
-    };
-
-    const getCurrentUser = async () => {
-        if (!auth.tokens?.accessToken) return null;
-
-        try {
-            const { data } = await $api.get<User>("/user/profile");
-            auth.setAuth(data, auth.tokens);
-            return data;
-        } catch {
-            auth.clearAuth();
-            return null;
-        }
-    };
+    const logoutMutation = useMutation({
+        mutationFn: async () => {
+            await $api.post("/auth/logout");
+        },
+        onSuccess: () => {
+            authStore.clearAuth();
+            queryClient.clear(); 
+        },
+    });
 
     return {
-        login,
-        logout,
-        getCurrentUser,
-        error,
+        loginMutation,
+        logoutMutation,
+        isAuthenticated: authStore.isAuthenticated,
+        user: authStore.user,
     };
 };
