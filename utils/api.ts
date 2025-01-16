@@ -3,11 +3,12 @@ import axios from "axios";
 import { useAuthStore } from "~/store/auth";
 import type { Tokens } from "~/types/auth";
 
-// utils/api.ts
 export class ApiService {
     private api: AxiosInstance;
+    private authStore: ReturnType<typeof useAuthStore>;
 
     constructor(baseURL: string) {
+        this.authStore = useAuthStore();
         this.api = axios.create({
             baseURL,
             withCredentials: true,
@@ -18,9 +19,9 @@ export class ApiService {
 
     private setupInterceptors() {
         this.api.interceptors.request.use((config) => {
-            const auth = useAuthStore();
-            if (auth.tokens?.accessToken) {
-                config.headers.Authorization = `Bearer ${auth.tokens.accessToken}`;
+            const { tokens } = this.authStore;
+            if (tokens?.accessToken) {
+                config.headers.Authorization = `Bearer ${tokens.accessToken}`;
             }
             return config;
         });
@@ -28,27 +29,26 @@ export class ApiService {
         this.api.interceptors.response.use(
             (response) => response,
             async (error) => {
-                const auth = useAuthStore();
+                const { tokens, clearAuth, updateTokens } = this.authStore;
 
                 if (
                     error.response?.status === 401 &&
-                    auth.tokens?.refreshToken
+                    tokens?.refreshToken
                 ) {
                     try {
-                        const { data } = await this.api.post<{
-                            tokens: Tokens;
-                        }>("/auth/refresh", {
-                            refreshToken: auth.tokens.refreshToken,
-                        });
+                        const { data } = await this.api.post<{ tokens: Tokens }>(
+                            "/auth/refresh",
+                            { refreshToken: tokens.refreshToken }
+                        );
 
-                        auth.updateTokens(data.tokens);
+                        updateTokens(data.tokens);
 
                         // Retry original request with new token
                         const config = error.config;
                         config.headers.Authorization = `Bearer ${data.tokens.accessToken}`;
                         return this.api.request(config);
                     } catch {
-                        auth.clearAuth();
+                        clearAuth();
                         navigateTo("/login");
                     }
                 }
