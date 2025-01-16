@@ -3,8 +3,11 @@ export default defineNuxtConfig({
     compatibilityDate: "2024-11-01",
     devtools: { enabled: true },
 
-    plugins: ["~/plugins/ant-design-vue.ts", "~/plugins/vee-validate.ts"],
-    modules: ["@nuxt/image"],
+    plugins: ["~/plugins/ant-design-vue.ts", "~/plugins/vee-validate.ts", "~/plugins/pinia.ts", "~/plugins/axios.ts"],
+    modules: ["@nuxt/image", "@pinia/nuxt"],
+    pinia: {
+        storesDirs: ['./stores/**'],
+      },
     //  Ant Design Vue styles
     css: ["ant-design-vue/dist/reset.css", "@/assets/styles/global.css"],
     vite: {
