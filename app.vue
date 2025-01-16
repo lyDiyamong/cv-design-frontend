@@ -92,4 +92,7 @@
     .full-width {
         width: 100%;
     }
+    .border-style {
+        border: 1px solid var(--color-gray-200);
+    }
 </style>

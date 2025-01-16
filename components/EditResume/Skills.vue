@@ -1,8 +1,4 @@
 <template>
-    <a-typography-title style="font-size: var(--font-size-h4)">
-        Skills
-    </a-typography-title>
-
     <div class="flex-between">
         <Input name="name" label="Skill name" placeholder="Enter skill name" />
         <SelectInput

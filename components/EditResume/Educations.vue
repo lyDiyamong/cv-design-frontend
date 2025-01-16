@@ -1,7 +1,4 @@
 <template>
-    <a-typography-title style="font-size: var(--font-size-h4)">
-        Educations
-    </a-typography-title>
 
     <div class="flex-between">
         <Input name="school" label="School" placeholder="Enter school name" />

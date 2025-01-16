@@ -62,6 +62,7 @@
     .bg-custom-color {
         background-color: #ffffff;
         transition: all 0.3s ease;
+        position: sticky;
     }
 
     .logo {

@@ -15,13 +15,49 @@
                 <!-- Summary -->
                 <Summary />
                 <!-- Experiences -->
-                <Experiences />
+                <a-typography-title
+                    style="font-size: var(--font-size-h4); margin-top: 24px"
+                >
+                    Experiences
+                </a-typography-title>
+                <DataSection>
+                    <template #form>
+                        <Experiences />
+                    </template>
+                </DataSection>
                 <!-- Educations -->
-                <Educations />
+                <a-typography-title
+                    style="font-size: var(--font-size-h4); margin-top: 24px"
+                >
+                    Educations
+                </a-typography-title>
+                <DataSection>
+                    <template #form>
+                        <Educations />
+                    </template>
+                </DataSection>
                 <!-- Skills -->
-                <Skills />
+                <a-typography-title
+                    style="font-size: var(--font-size-h4); margin-top: 24px"
+                >
+                    Skills
+                </a-typography-title>
+                <DataSection>
+                    <template #form>
+                        <Skills />
+                    </template>
+                </DataSection>
                 <!-- Languages -->
-                <Languages />
+                <a-typography-title
+                    style="font-size: var(--font-size-h4); margin-top: 24px"
+                >
+                    Languages
+                </a-typography-title>
+                <DataSection>
+                    <template #form>
+                        <Languages />
+                    </template>
+                </DataSection>
                 <!-- References -->
                 <References />
             </a-form>

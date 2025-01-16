@@ -1,9 +1,4 @@
 <template>
-    <a-typography-title
-        style="font-size: var(--font-size-h4); margin-top: 24px"
-    >
-        Experiences
-    </a-typography-title>
     <Input name="jobTitle" label="Job Title" placeholder="Enter Job title" />
     <a-form-item class="full-width" label="Responsibilities">
         <a-textarea
