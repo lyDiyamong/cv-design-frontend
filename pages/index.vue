@@ -1,34 +1,58 @@
-import { NuxtLink } from '../.nuxt/components';
 <template>
     <h2 class="text">Welcome to QuickCV</h2>
-    <a-form class="login-form">
-        <a-form-item>
-            <label for="email">Email</label>
-            <a-input placeholder="e.g(janedoe@gmail.com)" />
-        </a-form-item>
-        <a-form-item>
-            <label for="password">Password</label>
-            <a-input type="password" placeholder="e.g(pass1234)" />
-        </a-form-item>
-        <a-form-item>
-            <a-button
-                type="primary"
-                html-type="submit"
-                class="login-form-button"
-            >
-                Log in
-            </a-button>
-        </a-form-item>
+    <a-form layout="vertical" @submit.prevent="onSubmit" class="full-width">
+        <Input
+            name="email"
+            placeholder="e.g(janedoe@gmail.com)"
+            label="Email"
+        />
+
+        <Input name="password" label="Password" placeholder="pass1234" />
+        <a-button type="primary" html-type="submit" class="full-width">
+            Log in
+        </a-button>
     </a-form>
-    <div class="flex-center">
+    <div class="flex-center bottom-text">
         <p>
             Don't have an account?
-            <span class="signup-link"><NuxtLink href="/signup">Sign up</NuxtLink></span>
+            <span class="signup-link"
+                ><NuxtLink href="/signup">Sign up</NuxtLink></span
+            >
         </p>
     </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+    import { useForm } from "vee-validate";
+    import { toFieldValidator } from "@vee-validate/zod";
+    import { loginSchema } from "../utils/schema";
+    import type { LoginType } from "../types/auth";
+
+    // Mutation
+    import { useAuth } from "~/composables/useAuth";
+import { useAuthStore } from '../store/auth/index';
+
+    const { loginMutation, logoutMutation, isAuthenticated } = useAuth();
+
+    const zodResolver = toFieldValidator(loginSchema);
+    const { handleSubmit, values } = useForm<LoginType>({
+        validationSchema: zodResolver,
+    });
+
+    const authData = useAuthStore();
+
+    const onSubmit = handleSubmit(async (formValues) => {
+        try {
+            const data = await loginMutation.mutateAsync({
+                email: formValues.email,
+                password: formValues.password,
+            });
+
+        } catch (error) {
+            console.error("Error logging in", error);
+        }
+    });
+</script>
 
 <style scoped>
     .auth-layout {
@@ -44,13 +68,8 @@ import { NuxtLink } from '../.nuxt/components';
         margin-top: 20px;
         color: var(--color-primary-main);
     }
-    .login-form {
-        width: 100%;
-    }
-    .login-form-button {
-        width: 100%;
-    }
-    .bottom-text{
+    .bottom-text {
+        margin-top: 16px;
         display: flex;
         justify-content: center;
     }

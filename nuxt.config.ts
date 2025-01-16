@@ -3,11 +3,16 @@ export default defineNuxtConfig({
     compatibilityDate: "2024-11-01",
     devtools: { enabled: true },
 
-    plugins: ["~/plugins/ant-design-vue.ts", "~/plugins/vee-validate.ts", "~/plugins/pinia.ts", "~/plugins/axios.ts"],
+    plugins: [
+        "~/plugins/ant-design-vue.ts",
+        "~/plugins/vee-validate.ts",
+        "~/plugins/axios.ts",
+        "~/plugins/vue-query.ts",
+    ],
     modules: ["@nuxt/image", "@pinia/nuxt"],
     pinia: {
-        storesDirs: ['./stores/**'],
-      },
+        storesDirs: ["./stores/**"],
+    },
     //  Ant Design Vue styles
     css: ["ant-design-vue/dist/reset.css", "@/assets/styles/global.css"],
     vite: {
@@ -48,5 +53,15 @@ export default defineNuxtConfig({
     },
     typescript: {
         strict: true,
+    },
+
+    // Environment variables
+    runtimeConfig: {
+        public: {
+            myApiUrl: process.env.NUXT_SERVER_BASE_URL,
+        },
+        // private: {
+        //     mySecretKey: process.env.NUXT_SECRET_KEY, // Accessible server-side only
+        // },
     },
 });
