@@ -8,7 +8,7 @@ export default defineNuxtConfig({
         "~/plugins/vee-validate.ts",
         "~/plugins/axios.ts",
         "~/plugins/vue-query.ts",
-        "~/plugins/auth.ts",
+        // "~/plugins/auth.ts",
     ],
     modules: ["@nuxt/image", "@pinia/nuxt"],
     pinia: {
