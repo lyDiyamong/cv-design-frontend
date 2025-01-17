@@ -37,7 +37,7 @@ export class ApiService {
 
         if (error.response?.status === 401 && tokens?.refreshToken) {
             try {
-                const newTokens = await this.refreshTokens(tokens.refreshToken);
+                const newTokens = await this.refreshTokens();
                 updateTokens(newTokens);
 
                 // Retry the original request
@@ -46,19 +46,16 @@ export class ApiService {
                 return this.api.request(config);
             } catch (refreshError) {
                 clearAuth();
-                navigateTo("/login");
+                navigateTo("/");
             }
         }
 
-        return Promise.reject(error);
+        return Promise.reject(error?.failureReason?.response?.data || error);
     }
 
-    private async refreshTokens(refreshToken: string): Promise<Tokens> {
-        const { data } = await this.api.post<{ tokens: Tokens }>(
-            "/auth/refresh",
-            {
-                refreshToken,
-            }
+    private async refreshTokens(): Promise<Tokens> {
+        const { data } = await this.api.get<{ tokens: Tokens }>(
+            "/auth/refresh"
         );
         return data.tokens;
     }

@@ -18,13 +18,31 @@
     </a-layout>
 </template>
 
-<script lang="ts" setup></script>
+<script setup>
+import { useUser } from "~/composables/useUser";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+// Fetch user data directly in the layout
+const { userQuery } = useUser();
+
+// Redirect logic
+watchEffect(() => {
+    if (userQuery.isLoading.value) return; // Wait for the query to finish loading
+
+    if (userQuery.error.value || !userQuery.data.value) {
+        console.error("User not authenticated or an error occurred.");
+        router.push("/"); // Redirect to login page
+    }
+});
+</script>
 
 <style scoped>
-    /* Add custom styling for layout, if necessary */
-    .ant-layout-header {
-        display: flex;
-        align-items: center;
-        justify-content: end;
-    }
+/* Add custom styling for layout, if necessary */
+.ant-layout-header {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
 </style>

@@ -23,7 +23,6 @@ export const useUser = () => {
                 imageUrl,
             } = response.data.data;
 
-            // Transform the response to include only required fields
             return {
                 _id,
                 firstName,
@@ -34,27 +33,39 @@ export const useUser = () => {
                 imageUrl,
             };
         },
-        enabled: computed(() => authStore.isAuthenticated), // Only fetch if authenticated
         refetchOnWindowFocus: false,
-        retry: 1,
+        retry: 1, // Retry once on failure
     });
 
-    // Watch query data and update the store
+    // Computed properties for easier access
+    const userData = computed(() => userQuery.data.value); // User data
+    const isUserLoaded = computed(() => !!userData.value); // Boolean if user is loaded
+
+    // Update auth store when user data is fetched successfully
+    watch(userData, (data) => {
+        if (data) {
+            authStore.setUser(data); // Update store
+        }
+    });
+
+    // Watch the query state and update the store
     watch(
-        () => userQuery.data,
-        (userData) => {
-            if (userData?.value) {
-                authStore.setUser(userData.value); // Update the auth store
+        () => userQuery.isSuccess,
+        (isSuccess) => {
+            if (isSuccess && userQuery.data.value) {
+                console.log("Fetched user data successfully:", userQuery.data);
+                authStore.setUser(userQuery.data.value);
             }
         }
     );
 
+    console.log("Error", userQuery.isError, userQuery.error)
     watch(
-        () => userQuery.error,
-        (error) => {
-            if (error) {
-                console.error("Error fetching user data:", error);
-                authStore.clearAuth(); // Clear auth data on error
+        () => userQuery.isError,
+        (isError) => {
+            if (isError) {
+                console.error("Error fetching user data:", userQuery.error);
+                authStore.clearAuth();
             }
         }
     );

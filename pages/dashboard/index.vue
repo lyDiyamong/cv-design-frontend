@@ -1,19 +1,24 @@
 <template>
     <a-page-header title="Dashboard" />
     <section class="dashboard-container">
-        <Greeting last-name="Diyamong" />
+        <Greeting v-if="user?.lastName" :last-name="user?.lastName" />
     </section>
 </template>
 
 <script lang="ts" setup>
+    definePageMeta({
+        layout: "dashboard",
+    });
 
-definePageMeta({
-    layout: "dashboard",
-})
-    import { useAuthStore } from "../../store/auth/index";
+    import { useAuthStore } from "~/store/auth";
+    import { storeToRefs } from "pinia";
 
-    const authStore = useAuthStore();
-    console.log(authStore.user);
+    // Use Pinia store
+    const userStore = useAuthStore();
+
+    // Convert store properties to reactive refs
+    const { user } = storeToRefs(userStore);
+
 </script>
 
 <style>

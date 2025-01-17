@@ -20,12 +20,13 @@ export const useAuthStore = defineStore("auth", {
             if (this.tokens) {
                 this.tokens = {
                     ...this.tokens,
-                    ...newTokens
+                    ...newTokens,
                 };
             }
         },
 
         setUser(userData: User) {
+            console.log("Setting user in store:", userData); // Log user data
             this.user = userData;
         },
 
