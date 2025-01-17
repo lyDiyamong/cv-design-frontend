@@ -17,7 +17,6 @@ export const useAuth = () => {
             const { accessToken, refreshToken } = data.data;
             authStore.setTokens({ accessToken, refreshToken });
 
-            console.log("Fetched user data:", data);
         },
         onError: (error) => {
             console.error("Login failed", error);
@@ -26,7 +25,8 @@ export const useAuth = () => {
 
     const logoutMutation = useMutation({
         mutationFn: async () => {
-            await $api.post("/auth/logout");
+            const response = await $api.get<JsonResponseType<undefined>>("/auth/logout");
+            return response.data
         },
         onSuccess: () => {
             authStore.clearAuth();

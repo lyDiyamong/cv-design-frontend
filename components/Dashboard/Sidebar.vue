@@ -1,4 +1,11 @@
 <template>
+    <AlertMessage
+        v-if="alertVisible"
+        :message="alertMessage"
+        :type="alertType"
+        :duration="5000"
+        @close="clearAlert"
+    />
     <a-layout-sider
         breakpoint="lg"
         class="bg-custom-color"
@@ -11,11 +18,12 @@
         <div class="logo">QuickCV</div>
         <a-menu theme="light" mode="inline" :defaultSelectedKeys="['1']">
             <a-menu-item
-                v-for="(item) in menuItems"
+                v-for="item in menuItems"
                 :key="item.key"
                 :defaultSelectedKeys="[item.key]"
+                @click="item.key === 'logout' ? handleLogout() : null"
             >
-                <NuxtLink :to="item.path" />
+                <NuxtLink v-if="item.key !== 'logout'" :to="item.path" />
                 <template #icon>
                     <component :is="item.icon" />
                 </template>
@@ -32,16 +40,25 @@
         FolderOutlined,
         LogoutOutlined,
     } from "@ant-design/icons-vue";
-    import { ref } from "vue";
 
     const isCollapsed = ref(true);
 
+    const alertMessage = ref<string | null>(null);
+    const alertType = ref<"success" | "error" | "info" | "warning">("info");
+    const alertVisible = ref(false);
+
+    // Sidebar hover events
     const handleMouseEnter = () => {
         isCollapsed.value = false;
     };
 
     const handleMouseLeave = () => {
         isCollapsed.value = true;
+    };
+
+    // Clear the alert
+    const clearAlert = () => {
+        alertVisible.value = false;
     };
 
     // Menu items array
@@ -52,10 +69,51 @@
             icon: AppstoreOutlined,
             path: "/dashboard",
         },
-        { key: "2", name: "Resume", icon: FolderOutlined, path: "/dashboard/resumes" },
-        { key: "3", name: "Profile", icon: UserOutlined, path: "/dashboard/profile" },
-        { key: "4", name: "Logout", icon: LogoutOutlined, path: "/" },
+        {
+            key: "2",
+            name: "Resume",
+            icon: FolderOutlined,
+            path: "/dashboard/resumes",
+        },
+        {
+            key: "3",
+            name: "Profile",
+            icon: UserOutlined,
+            path: "/dashboard/profile",
+        },
+        { key: "logout", name: "Logout", icon: LogoutOutlined },
     ];
+    const { logoutMutation } = useAuth();
+
+    const router = useRouter();
+
+    const handleLogout = () => {
+        logoutMutation.mutate(undefined, {
+            onSuccess: (data) => {
+                // Handle successful response
+                console.log("Logout successful:", data.message);
+                // Show success message to the user
+                alertMessage.value = data.message || "Logout successful!";
+                alertType.value = "success";
+                alertVisible.value = true;
+
+                // Redirect to the login or home page
+                navigateTo("/");
+            },
+            onError: (error) => {
+                // Handle error response
+                console.error(
+                    "Logout failed:",
+                    error.response?.data?.message || error.message
+                );
+                // Show error message to the user
+                alertMessage.value =
+                    error.response?.data?.message || "Logout failed!";
+                alertType.value = "error";
+                alertVisible.value = true;
+            },
+        });
+    };
 </script>
 
 <style scoped>

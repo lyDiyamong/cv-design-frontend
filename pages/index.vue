@@ -30,9 +30,8 @@
 
     // Mutation
     import { useAuth } from "~/composables/useAuth";
-    import { useAuthStore } from "../store/auth/index";
 
-    const { loginMutation, logoutMutation, isAuthenticated } = useAuth();
+    const { loginMutation } = useAuth();
 
     const zodResolver = toFieldValidator(loginSchema);
     const { handleSubmit, values } = useForm<LoginType>({
@@ -41,15 +40,13 @@
 
     const router = useRouter();
 
-    const authData = useAuthStore();
-
     const onSubmit = handleSubmit(async (formValues) => {
         try {
             const data = await loginMutation.mutateAsync({
                 email: formValues.email,
                 password: formValues.password,
             });
-            
+
 
             if (data) {
                 router.push("/dashboard");
@@ -59,14 +56,6 @@
         }
     });
 
-    watch(
-        () => authData.tokens,
-        (token) => {
-            if (token) {
-                console.log("Token:", token);
-            }
-        }
-    );
 </script>
 
 <style scoped>

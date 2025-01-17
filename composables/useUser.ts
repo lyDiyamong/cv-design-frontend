@@ -44,7 +44,9 @@ export const useUser = () => {
     // Update auth store when user data is fetched successfully
     watch(userData, (data) => {
         if (data) {
-            authStore.setUser(data); // Update store
+
+            // Update store
+            authStore.setUser(data); 
         }
     });
 
@@ -53,13 +55,11 @@ export const useUser = () => {
         () => userQuery.isSuccess,
         (isSuccess) => {
             if (isSuccess && userQuery.data.value) {
-                console.log("Fetched user data successfully:", userQuery.data);
                 authStore.setUser(userQuery.data.value);
             }
         }
     );
 
-    console.log("Error", userQuery.isError, userQuery.error)
     watch(
         () => userQuery.isError,
         (isError) => {
