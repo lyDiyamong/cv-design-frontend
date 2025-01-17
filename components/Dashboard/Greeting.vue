@@ -2,7 +2,7 @@
     <a-card class="greeting-card">
         <div class="greeting-content">
             <div class="greeting-text">
-                <a-typography-title level="5" style="color: white">
+                <a-typography-title :level="5" style="color: white">
                     Welcome back, {{ lastName }}
                 </a-typography-title>
                 <a-typography-text style="color: white">

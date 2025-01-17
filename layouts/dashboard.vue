@@ -18,9 +18,7 @@
     </a-layout>
 </template>
 
-<script lang="ts" setup>
-    // No additional script needed as Sidebar is imported directly
-</script>
+<script lang="ts" setup></script>
 
 <style scoped>
     /* Add custom styling for layout, if necessary */

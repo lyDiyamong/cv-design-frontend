@@ -6,9 +6,14 @@
 </template>
 
 <script lang="ts" setup>
-    definePageMeta({
-        layout: "dashboard",
-    });
+
+definePageMeta({
+    layout: "dashboard",
+})
+    import { useAuthStore } from "../../store/auth/index";
+
+    const authStore = useAuthStore();
+    console.log(authStore.user);
 </script>
 
 <style>

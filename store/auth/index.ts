@@ -7,18 +7,26 @@ interface AuthState {
 
 export const useAuthStore = defineStore("auth", {
     state: (): AuthState => ({
-        user: null,
-        tokens: null,
+        user: null, // Stores user data fetched from the backend
+        tokens: null, // Stores authentication tokens
     }),
 
     actions: {
-        setAuth(userData: User, tokens: Tokens) {
-            this.user = userData;
+        setTokens(tokens: Tokens) {
             this.tokens = tokens;
         },
 
-        updateTokens(tokens: Tokens) {
-            this.tokens = tokens;
+        updateTokens(newTokens: Partial<Tokens>) {
+            if (this.tokens) {
+                this.tokens = {
+                    ...this.tokens,
+                    ...newTokens
+                };
+            }
+        },
+
+        setUser(userData: User) {
+            this.user = userData;
         },
 
         clearAuth() {
@@ -29,7 +37,7 @@ export const useAuthStore = defineStore("auth", {
 
     getters: {
         isAuthenticated(): boolean {
-            return !!this.tokens?.accessToken;
+            return !!this.user; // Authentication is tied to the presence of user data
         },
     },
 });

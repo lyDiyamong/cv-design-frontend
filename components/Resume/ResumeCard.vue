@@ -14,9 +14,9 @@
     </a-card>
     <!-- Card Footer -->
     <div class="card-footer">
-        <a-typogragphy-text class="resume-title">{{
+        <a-typography-text class="resume-title">{{
             title
-        }}</a-typogragphy-text>
+        }}</a-typography-text>
     </div>
 </template>
 

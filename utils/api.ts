@@ -28,33 +28,39 @@ export class ApiService {
 
         this.api.interceptors.response.use(
             (response) => response,
-            async (error) => {
-                const { tokens, clearAuth, updateTokens } = this.authStore;
+            (error) => this.handleError(error)
+        );
+    }
 
-                if (
-                    error.response?.status === 401 &&
-                    tokens?.refreshToken
-                ) {
-                    try {
-                        const { data } = await this.api.post<{ tokens: Tokens }>(
-                            "/auth/refresh",
-                            { refreshToken: tokens.refreshToken }
-                        );
+    private async handleError(error: any) {
+        const { tokens, clearAuth, updateTokens } = this.authStore;
 
-                        updateTokens(data.tokens);
+        if (error.response?.status === 401 && tokens?.refreshToken) {
+            try {
+                const newTokens = await this.refreshTokens(tokens.refreshToken);
+                updateTokens(newTokens);
 
-                        // Retry original request with new token
-                        const config = error.config;
-                        config.headers.Authorization = `Bearer ${data.tokens.accessToken}`;
-                        return this.api.request(config);
-                    } catch {
-                        clearAuth();
-                        navigateTo("/login");
-                    }
-                }
-                return Promise.reject(error);
+                // Retry the original request
+                const config = error.config;
+                config.headers.Authorization = `Bearer ${newTokens.accessToken}`;
+                return this.api.request(config);
+            } catch (refreshError) {
+                clearAuth();
+                navigateTo("/login");
+            }
+        }
+
+        return Promise.reject(error);
+    }
+
+    private async refreshTokens(refreshToken: string): Promise<Tokens> {
+        const { data } = await this.api.post<{ tokens: Tokens }>(
+            "/auth/refresh",
+            {
+                refreshToken,
             }
         );
+        return data.tokens;
     }
 
     get instance(): AxiosInstance {

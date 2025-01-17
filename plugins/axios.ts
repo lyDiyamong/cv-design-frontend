@@ -1,6 +1,4 @@
-import { configDotenv } from "dotenv";
 import { ApiService } from "~/utils/api";
-// configDotenv()
 
 export default defineNuxtPlugin(() => {
     const config = useRuntimeConfig();

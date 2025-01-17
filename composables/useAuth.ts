@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import { useAuthStore } from "~/store/auth";
 import type { JsonResponseType } from "~/types/json";
-import type { AuthResponse, LoginType } from "~/types/auth";
-
+import type { AuthResponse, LoginType, Tokens, User } from "~/types/auth";
 
 export const useAuth = () => {
     const { $api } = useNuxtApp();
@@ -12,10 +11,13 @@ export const useAuth = () => {
     const loginMutation = useMutation({
         mutationFn: async (credentials: LoginType) => {
             const response = await $api.post("/auth/login", credentials);
-            return response.data as JsonResponseType<AuthResponse>;
+            return response.data as JsonResponseType<Tokens>;
         },
-        onSuccess: ({ data }) => {
-            authStore.setAuth(data.user, data.tokens);
+        onSuccess: async (data) => {
+            const { accessToken, refreshToken } = data.data;
+            authStore.setTokens({ accessToken, refreshToken });
+
+            console.log("Fetched user data:", data);
         },
         onError: (error) => {
             console.error("Login failed", error);
@@ -28,7 +30,7 @@ export const useAuth = () => {
         },
         onSuccess: () => {
             authStore.clearAuth();
-            queryClient.clear(); 
+            queryClient.clear();
         },
     });
 

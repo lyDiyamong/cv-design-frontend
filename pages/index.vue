@@ -30,7 +30,7 @@
 
     // Mutation
     import { useAuth } from "~/composables/useAuth";
-import { useAuthStore } from '../store/auth/index';
+    import { useAuthStore } from "../store/auth/index";
 
     const { loginMutation, logoutMutation, isAuthenticated } = useAuth();
 
@@ -38,6 +38,8 @@ import { useAuthStore } from '../store/auth/index';
     const { handleSubmit, values } = useForm<LoginType>({
         validationSchema: zodResolver,
     });
+
+    const router = useRouter();
 
     const authData = useAuthStore();
 
@@ -47,11 +49,24 @@ import { useAuthStore } from '../store/auth/index';
                 email: formValues.email,
                 password: formValues.password,
             });
+            
 
+            if (data) {
+                router.push("/dashboard");
+            }
         } catch (error) {
             console.error("Error logging in", error);
         }
     });
+
+    watch(
+        () => authData.tokens,
+        (token) => {
+            if (token) {
+                console.log("Token:", token);
+            }
+        }
+    );
 </script>
 
 <style scoped>
