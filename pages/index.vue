@@ -1,9 +1,9 @@
 <template>
     <h2 class="text">Welcome to QuickCV</h2>
     <AlertMessage
-        v-if="alertVisible"
-        :message="alertMessage"
-        :type="alertType"
+        v-if="alertStore.isVisible"
+        :message="alertStore.message"
+        :type="alertStore.type"
         :duration="5000"
     />
     <a-form layout="vertical" @submit.prevent="onSubmit" class="full-width">
@@ -12,7 +12,6 @@
             placeholder="e.g(janedoe@gmail.com)"
             label="Email"
         />
-
         <Input name="password" label="Password" placeholder="pass1234" />
         <a-button type="primary" html-type="submit" class="full-width">
             Log in
@@ -37,8 +36,10 @@
     // Mutation
     import { useAuth } from "~/composables/useAuth";
     import { useAuthStore } from "../store/auth/index";
+    import { useAlertStore } from "../store/alert";
 
     const authStore = useAuthStore();
+    const alertStore = useAlertStore();
 
     const { loginMutation } = useAuth();
 
@@ -46,10 +47,6 @@
     const { handleSubmit } = useForm<LoginType>({
         validationSchema: zodResolver,
     });
-
-    const alertVisible = ref(false);
-    const alertMessage = ref("");
-    const alertType = ref<"info" | "success" | "error">("info");
 
     const onSubmit = handleSubmit(async (formValues) => {
         try {
@@ -59,18 +56,19 @@
             });
 
             if (data) {
-                authStore.setMessage(data.message);
+                alertStore.showAlert({
+                    message: data.message,
+                    type: "success",
+                    duration: 5000,
+                });
                 navigateTo("/dashboard");
             }
         } catch (error: any) {
-            alertMessage.value = ""
-            // Wait for the DOM to update
-            await nextTick(); 
-            alertMessage.value = error.response.data.message;
-            alertVisible.value = true;
-            alertType.value = "error";
-            authStore.setMessage(error.response.data.message);
-            console.error("Error logging in", error.response.data.message);
+            alertStore.showAlert({
+                message: error.response.data.message,
+                type: "error",
+                duration: 5000,
+            });
         }
     });
 </script>

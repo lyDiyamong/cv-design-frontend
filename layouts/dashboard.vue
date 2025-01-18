@@ -2,6 +2,12 @@
     <a-layout style="min-height: 100vh">
         <!-- Sidebar -->
         <Sidebar />
+        <AlertMessage
+            v-if="alertStore.isVisible"
+            :message="alertStore.message"
+            :type="alertStore.type"
+            :duration="5000"
+        />
 
         <!-- Main content area -->
         <a-layout>
@@ -18,31 +24,33 @@
     </a-layout>
 </template>
 
-<script setup>
-import { useUser } from "~/composables/useUser";
-import { useRouter } from "vue-router";
+<script setup lang="ts">
+    import { useAuthStore } from "../store/auth/index";
+    import { useUser } from "~/composables/useUser";
+    import { useAlertStore } from "../store/alert";
 
-const router = useRouter();
+    const router = useRouter();
+    const authStore = useAuthStore();
+    const { userQuery } = useUser();
 
-// Fetch user data directly in the layout
-const { userQuery } = useUser();
+    const alertStore = useAlertStore();
 
-// Redirect logic
-watchEffect(() => {
-    if (userQuery.isLoading.value) return; // Wait for the query to finish loading
+    // Redirect logic
+    watchEffect(() => {
+        if (userQuery.isLoading.value) return; // Wait for the query to finish loading
 
-    if (userQuery.error.value || !userQuery.data.value) {
-        console.error("User not authenticated or an error occurred.");
-        router.push("/"); // Redirect to login page
-    }
-});
+        if (userQuery.error.value || !userQuery.data.value) {
+            console.error("User not authenticated or an error occurred.");
+            router.push("/"); // Redirect to login page
+        }
+    });
 </script>
 
 <style scoped>
-/* Add custom styling for layout, if necessary */
-.ant-layout-header {
-    display: flex;
-    align-items: center;
-    justify-content: end;
-}
+    /* Add custom styling for layout, if necessary */
+    .ant-layout-header {
+        display: flex;
+        align-items: center;
+        justify-content: end;
+    }
 </style>

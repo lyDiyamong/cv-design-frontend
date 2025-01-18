@@ -37,6 +37,7 @@ export default defineNuxtConfig({
         { path: "~/components/Form/", pathPrefix: false },
         { path: "~/components/Resume/", pathPrefix: false },
         { path: "~/components/EditResume/", pathPrefix: false },
+        { path: "~/components/", pathPrefix: false },
     ],
 
     app: {

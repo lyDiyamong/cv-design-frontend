@@ -33,7 +33,6 @@
     }
 
     const props = defineProps<SelectInputProps>();
-    console.log("Options received in SelectInput:", props.options);
 
     const {
         value: selectedValue,

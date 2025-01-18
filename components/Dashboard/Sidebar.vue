@@ -98,8 +98,6 @@
             }
         } catch (error: any) {
             authStore.setMessage(error.data.message);
-            // alertMessage.value =
-            //     error.response?.data?.message || "Logout failed!";
             console.error("Error logging in", error);
         }
     };

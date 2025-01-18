@@ -81,7 +81,7 @@
     .flex-between {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        width: 100%;
         gap: 8px;
     }
     .flex-center {
