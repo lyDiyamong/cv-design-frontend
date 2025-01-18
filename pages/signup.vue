@@ -52,7 +52,7 @@
     <div class="bottom-text">
         <a-typography-text>
             Already have an account?
-            <a-typography-link style="color: var(--color-primary-main);" href="/"> Log in </a-typography-link>
+            <NuxtLink style="color: var(--color-primary-main);"  to="/"> Log in </NuxtLink>
         </a-typography-text>
     </div>
 </template>
