@@ -1,5 +1,11 @@
 <template>
     <h2 class="text">Welcome to QuickCV</h2>
+    <AlertMessage
+        v-if="alertVisible"
+        :message="alertMessage"
+        :type="alertType"
+        :duration="5000"
+    />
     <a-form layout="vertical" @submit.prevent="onSubmit" class="full-width">
         <Input
             name="email"
@@ -30,6 +36,9 @@
 
     // Mutation
     import { useAuth } from "~/composables/useAuth";
+    import { useAuthStore } from "../store/auth/index";
+
+    const authStore = useAuthStore();
 
     const { loginMutation } = useAuth();
 
@@ -38,7 +47,9 @@
         validationSchema: zodResolver,
     });
 
-    const router = useRouter();
+    const alertVisible = ref(false);
+    const alertMessage = ref("");
+    const alertType = ref<"info" | "success" | "error">("info");
 
     const onSubmit = handleSubmit(async (formValues) => {
         try {
@@ -47,15 +58,21 @@
                 password: formValues.password,
             });
 
-
             if (data) {
-                router.push("/dashboard");
+                authStore.setMessage(data.message);
+                navigateTo("/dashboard");
             }
-        } catch (error) {
-            console.error("Error logging in", error);
+        } catch (error: any) {
+            alertMessage.value = ""
+            // Wait for the DOM to update
+            await nextTick(); 
+            alertMessage.value = error.response.data.message;
+            alertVisible.value = true;
+            alertType.value = "error";
+            authStore.setMessage(error.response.data.message);
+            console.error("Error logging in", error.response.data.message);
         }
     });
-
 </script>
 
 <style scoped>

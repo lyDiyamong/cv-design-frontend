@@ -3,12 +3,14 @@ import type { Tokens, User } from "~/types/auth";
 interface AuthState {
     user: User | null;
     tokens: Tokens | null;
+    message: string | null;
 }
 
 export const useAuthStore = defineStore("auth", {
     state: (): AuthState => ({
         user: null, // Stores user data fetched from the backend
-        tokens: null, // Stores authentication tokens
+        tokens: null, // Stores authentication tokens,
+        message: null,
     }),
 
     actions: {
@@ -33,6 +35,14 @@ export const useAuthStore = defineStore("auth", {
         clearAuth() {
             this.user = null;
             this.tokens = null;
+        },
+        setMessage(message: string) {
+            console.log("message set from store", message);
+            this.message = message;
+        },
+
+        clearMessage() {
+            this.message = null;
         },
     },
 

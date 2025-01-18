@@ -3,10 +3,10 @@
         <a-alert
             v-if="isVisible"
             class="custom-alert"
-            :message="message"
+            :message="alertMessage"
             :type="type"
             :closable="closable"
-            @close="closeAlert"
+            @close="handleClose"
             show-icon
         />
     </transition>
@@ -17,6 +17,7 @@
         type = "info",
         duration = 3000,
         closable = true,
+        message,
     } = defineProps<{
         message: string;
         type?: "success" | "error" | "info" | "warning";
@@ -24,30 +25,51 @@
         closable?: boolean;
     }>();
 
-    // Define emits in the setup scope
     const emit = defineEmits<{
         (event: "close"): void;
     }>();
 
-    // Local state to manage visibility of the alert
-    const isVisible = ref(true);
+    const alertMessage = ref(""); // Local state for the alert message
+    const isVisible = ref(false); // Local state for visibility
 
-    // Automatically hide the alert after `duration` milliseconds
-    if (duration > 0) {
-        const timer = setTimeout(() => {
-            isVisible.value = false;
-        }, duration);
+    let timer: number | undefined;
 
-        // Clear the timer when component is unmounted
-        onUnmounted(() => clearTimeout(timer));
-    }
-
-    // Function to close the alert
-    const closeAlert = () => {
-        isVisible.value = false;
-        // Notify parent about close
-        emit("close");
+    const startAutoClearTimer = () => {
+        if (duration > 0) {
+            clearTimeout(timer as number);
+            timer = setTimeout(() => {
+                autoClearAlert();
+            }, duration) as unknown as number;
+        }
     };
+
+    // Watch the `message` prop for changes
+    watch(
+        () => message,
+        (newMessage) => {
+            if (newMessage) {
+                console.log("message trigger from alert// Wait for the DOM to update", message);
+                alertMessage.value = newMessage;
+                isVisible.value = true; // Show the alert
+                startAutoClearTimer(); // Restart the timer for the new message
+            }
+        },
+        { immediate: true } // Trigger immediately on mount with the initial message
+    );
+
+    const autoClearAlert = () => {
+        isVisible.value = false;
+        alertMessage.value = ""; // Clear the message when the alert disappears
+    };
+
+    const handleClose = () => {
+        autoClearAlert(); // Handle manual closure
+        emit("close"); // Notify parent
+    };
+
+    onUnmounted(() => {
+        clearTimeout(timer); // Cleanup on component unmount
+    });
 </script>
 
 <style scoped>
