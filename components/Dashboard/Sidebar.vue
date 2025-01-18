@@ -1,11 +1,10 @@
 <template>
-    <AlertMessage
+    <!-- <AlertMessage
         v-if="alertVisible"
-        :message="alertMessage"
+        :message="authStore.message"
         :type="alertType"
         :duration="5000"
-        @close="clearAlert"
-    />
+    /> -->
     <a-layout-sider
         breakpoint="lg"
         class="bg-custom-color"
@@ -40,6 +39,8 @@
         FolderOutlined,
         LogoutOutlined,
     } from "@ant-design/icons-vue";
+    import { useAuthStore } from "../../store/auth/index";
+    import { useAlertStore } from "../../store/alert";
 
     const isCollapsed = ref(true);
 
@@ -56,10 +57,9 @@
         isCollapsed.value = true;
     };
 
-    // Clear the alert
-    const clearAlert = () => {
-        alertVisible.value = false;
-    };
+    const authStore = useAuthStore();
+    const alertStore = useAlertStore();
+    const { logoutMutation } = useAuth();
 
     // Menu items array
     const menuItems = [
@@ -83,35 +83,25 @@
         },
         { key: "logout", name: "Logout", icon: LogoutOutlined },
     ];
-    const { logoutMutation } = useAuth();
 
+    const handleLogout = async () => {
+        try {
+            const data = await logoutMutation.mutateAsync();
 
-    const handleLogout = () => {
-        logoutMutation.mutate(undefined, {
-            onSuccess: (data) => {
-                // Handle successful response
-                console.log("Logout successful:", data.message);
-                // Show success message to the user
-                alertMessage.value = data.message || "Logout successful!";
-                alertType.value = "success";
-                alertVisible.value = true;
-
-                // Redirect to the login or home page
+            if (data) {
+                alertStore.showAlert({
+                    message: data.message,
+                    type: "success",
+                    duration: 5000,
+                });
                 navigateTo("/");
-            },
-            onError: (error: any) => {
-                // Handle error response
-                console.error(
-                    "Logout failed:",
-                    error.response?.data?.message || error.message
-                );
-                // Show error message to the user
-                alertMessage.value =
-                    error.response?.data?.message || "Logout failed!";
-                alertType.value = "error";
-                alertVisible.value = true;
-            },
-        });
+            }
+        } catch (error: any) {
+            authStore.setMessage(error.data.message);
+            // alertMessage.value =
+            //     error.response?.data?.message || "Logout failed!";
+            console.error("Error logging in", error);
+        }
     };
 </script>
 

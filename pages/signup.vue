@@ -52,7 +52,7 @@
     <div class="bottom-text">
         <a-typography-text>
             Already have an account?
-            <a-typography-link href="/"> Log in </a-typography-link>
+            <a-typography-link style="color: var(--color-primary-main);" href="/"> Log in </a-typography-link>
         </a-typography-text>
     </div>
 </template>
@@ -63,6 +63,7 @@
     import { signUpSchema } from "../utils/schema";
     import type { SignupType } from "../types/auth";
     import { useAuth } from "~/composables/useAuth";
+    import { useAlertStore } from "../store/alert";
 
     const genderOptions = [
         {
@@ -81,6 +82,7 @@
     });
 
     const { signupMutation } = useAuth();
+    const alertStore = useAlertStore();
 
     const onSubmit = handleSubmit(async (formValues) => {
         try {
@@ -95,10 +97,19 @@
             });
 
             if (data) {
+                alertStore.showAlert({
+                    message: data.message,
+                    type: "success",
+                    duration: 5000,
+                });
                 navigateTo("/dashboard");
             }
-        } catch (error) {
-            console.error("Error logging in", error);
+        } catch (error: any) {
+            alertStore.showAlert({
+                message: error.response.data.message,
+                type: "error",
+                duration: 5000,
+            });
         }
     });
 </script>
@@ -118,6 +129,7 @@
         color: var(--color-primary-main);
     }
     .bottom-text {
+        margin-top: 8px;
         display: flex;
         justify-content: center;
     }
