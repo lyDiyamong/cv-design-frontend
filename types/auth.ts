@@ -1,4 +1,4 @@
-import type { loginSchema } from "~/utils/schema";
+import type { loginSchema, signUpSchema } from "~/utils/schema";
 import * as z from "zod";
 
 // types/auth.ts
@@ -19,6 +19,8 @@ export interface Tokens {
 }
 
 export type LoginType = z.infer<typeof loginSchema>;
+
+export type SignupType = z.infer<typeof signUpSchema>;
 
 export interface AuthResponse {
     data: Tokens

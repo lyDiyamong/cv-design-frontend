@@ -34,7 +34,7 @@
     const { loginMutation } = useAuth();
 
     const zodResolver = toFieldValidator(loginSchema);
-    const { handleSubmit, values } = useForm<LoginType>({
+    const { handleSubmit } = useForm<LoginType>({
         validationSchema: zodResolver,
     });
 

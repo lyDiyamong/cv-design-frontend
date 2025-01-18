@@ -1,6 +1,6 @@
 <template>
     <h2 class="text">Create an account</h2>
-    <a-form class="full-width">
+    <a-form layout="vertical" class="full-width" @submit.prevent="onSubmit">
         <!-- Name section -->
         <div class="flex-between">
             <Input
@@ -24,29 +24,26 @@
         <div class="flex-between">
             <!-- Gender -->
             <SelectInput
+                name="gender"
                 label="Gender"
                 placeholder="Select your gender"
                 :options="genderOptions"
             />
 
             <!-- Date of Birth -->
-            <a-form-item>
-                <label for="dob">Date of Birth</label>
-                <a-date-picker
-                    class="full-width"
-                    placeholder="Select date of birth"
-                />
-            </a-form-item>
+            <DateInput name="dateOfBirth" label="Date of Birth" placeholder="Choose your dob" />
         </div>
 
         <!-- Password -->
-        <Input name="password" label="Password" placeholder="pass1234" /> 
-        <Input name="confirmPassword" label="Confirm Password" placeholder="pass1234" />
-        <a-form-item>
-            <a-button class="full-width" type="primary" html-type="submit">
-                Log in
-            </a-button>
-        </a-form-item>
+        <Input name="password" label="Password" placeholder="pass1234" />
+        <Input
+            name="confirmPassword"
+            label="Confirm Password"
+            placeholder="pass1234"
+        />
+        <a-button class="full-width" type="primary" html-type="submit">
+            Log in
+        </a-button>
     </a-form>
     <div class="bottom-text">
         <a-typography-text>
@@ -57,18 +54,44 @@
 </template>
 
 <script lang="ts" setup>
-    import type Input from "~/components/Form/Input.vue";
+    import { useForm } from "vee-validate";
+    import { toFieldValidator } from "@vee-validate/zod";
+    import { signUpSchema } from "../utils/schema";
+    import type { SignupType } from "../types/auth";
 
-    const genderOptions = [
-        {
-            value: "Male",
-            label: "Male",
-        },
-        {
-            value: "Female",
-            label: "Female",
-        },
-    ];
+    const genderOptions =
+        [
+            {
+                value: "Male",
+                label: "Male",
+            },
+            {
+                value: "Female",
+                label: "Female",
+            },
+        ] ;
+
+        console.log(genderOptions)
+    const zodResolver = toFieldValidator(signUpSchema);
+    const { handleSubmit } = useForm<SignupType>({
+        validationSchema: zodResolver,
+    });
+
+    const onSubmit = handleSubmit(async (formValues) => {
+        console.log(formValues);
+        // try {
+        //     const data = await loginMutation.mutateAsync({
+        //         email: formValues.email,
+        //         password: formValues.password,
+        //     });
+
+        //     if (data) {
+        //         router.push("/dashboard");
+        //     }
+        // } catch (error) {
+        //     console.error("Error logging in", error);
+        // }
+    });
 </script>
 
 <style scoped>

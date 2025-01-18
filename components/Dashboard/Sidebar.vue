@@ -85,7 +85,6 @@
     ];
     const { logoutMutation } = useAuth();
 
-    const router = useRouter();
 
     const handleLogout = () => {
         logoutMutation.mutate(undefined, {
@@ -100,7 +99,7 @@
                 // Redirect to the login or home page
                 navigateTo("/");
             },
-            onError: (error) => {
+            onError: (error: any) => {
                 // Handle error response
                 console.error(
                     "Logout failed:",
