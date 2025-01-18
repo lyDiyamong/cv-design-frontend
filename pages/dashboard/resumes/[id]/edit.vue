@@ -32,6 +32,13 @@
     <section class="edit-resume-container">
         <section class="form-container">
             <a-form layout="vertical">
+                <div v-for="section in sections?.data">
+                    <Experiences
+                        v-if="section.type === 'experiences'"
+                        :content="section.content"
+                    />
+                </div>
+
                 <!-- Upload image -->
                 <UploadImage />
                 <!-- Personal -->
@@ -49,7 +56,6 @@
                             v-if="section.type === 'Experiences'"
                             :experiences="section.content || ''"
                         /> -->
-                <Experiences />
 
                 <!-- Educations -->
                 <a-typography-title
@@ -106,7 +112,8 @@
 </template>
 
 <script lang="ts" setup>
-    import { ref } from "vue";
+    import type { UpdateExperienceContent } from "~/types/sections";
+
     definePageMeta({
         layout: "dashboard",
     });
@@ -122,8 +129,12 @@
         },
     ];
 
-    // When accessing /posts/1, route.params.id will be 1
-    // console.log(route.params.id);
+    const route = useRoute();
+
+    const resumeId = route.params.id as string;
+    const { sectionResumeQuery } = useSection();
+
+    const { data: sections, isLoading } = sectionResumeQuery(resumeId);
 
     // Template selection
     const template1 =

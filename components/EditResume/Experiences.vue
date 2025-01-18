@@ -11,7 +11,7 @@
                 :key="index"
                 class="form-row"
             >
-                <div class="flex-form-group">
+                <div class="flex-between">
                     <!-- Job Title -->
                     <a-form-item label="Job Title">
                         <Field
@@ -39,18 +39,18 @@
                     </a-form-item>
                 </div>
                 <a-form-item label="Responsibility">
-                        <Field
-                            :name="`content.${index}.responsibility`"
-                            as="a-input"
-                            placeholder="Responsibility"
-                        />
-                        <ErrorMessage
-                            :name="`content.${index}.responsibility`"
-                            class="error-message"
-                        />
-                    </a-form-item>
+                    <Field
+                        :name="`content.${index}.responsibility`"
+                        as="a-input"
+                        placeholder="Responsibility"
+                    />
+                    <ErrorMessage
+                        :name="`content.${index}.responsibility`"
+                        class="error-message"
+                    />
+                </a-form-item>
 
-                <div class="flex-form-group">
+                <div class="flex-between">
                     <!-- Start Date -->
                     <a-form-item class="w-full" label="Start Date">
                         <!-- <input
@@ -116,11 +116,12 @@
     import { DeleteOutlined } from "@ant-design/icons-vue";
     import dayjs from "dayjs";
     import { updateExperienceSchema } from "~/utils/schema";
+import type { UpdateExperienceContent } from "~/types/sections";
 
     type UpdateExperienceType = z.infer<typeof updateExperienceSchema>;
     // Props received from the parent
     const props = defineProps<{
-        content?: Array<UpdateExperienceType>;
+        content: UpdateExperienceContent[];
     }>();
 
     // Validation schema for an individual experience
@@ -137,7 +138,7 @@
         initialValues: {
             // Use the passed experiences or an empty array
             content: props.content || [],
-            type: "experiences"
+            type: "experiences",
         },
     });
 
