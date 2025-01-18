@@ -67,11 +67,17 @@ export interface UpdateSectionSchemasTypes {
 export type SectionKeys = keyof UpdateSectionSchemasTypes;
 
 // Type for Update Section
-export interface UpdateSection {
+export interface UpdateSectionType {
+    resumeId: string;
+    type: SectionKeys;
+    content: UpdateSectionSchemasTypes[SectionKeys];
+}
+
+export interface SectionType {
     resumeId: string;
     type: SectionKeys;
     content: UpdateSectionSchemasTypes[SectionKeys];
 }
 
 // Type for the array of Update Sections
-export type UpdateSectionArray = UpdateSection[];
+export type UpdateSectionArray = UpdateSectionType[];

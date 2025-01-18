@@ -7,7 +7,7 @@ export interface ResumeType {
   _id: string;
   userId: User;
   title: string;
-  previewImageUrl: string;
+  previewImg: string;
   sections: UpdateSectionArray;
 }
 

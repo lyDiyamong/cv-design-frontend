@@ -4,6 +4,7 @@
         <a-button type="primary" :icon="h(PlusOutlined)"> New Resume </a-button>
     </div>
     <section class="resumes-page-container">
+        <SpinLoading :loading="isLoading" />
         <a-row :gutter="[48, 16]">
             <a-col
                 :xs="24"
@@ -11,13 +12,15 @@
                 :md="8"
                 :lg="6"
                 :xl="4"
-                v-for="resume in currentItems"
-                :key="resume.id"
+                v-for="resume in resumes?.data"
+                :key="resume._id"
             >
-                <ResumeCard
-                    :preview-img="resume.imgUrl"
-                    :title="resume.title"
-                />
+                <NuxtLink :to="`resumes/${resume._id}/edit`">
+                    <ResumeCard
+                        :preview-img="resume.previewImg"
+                        :title="resume.title"
+                    />
+                </NuxtLink>
             </a-col>
         </a-row>
 
@@ -41,74 +44,20 @@
 
     const { resumeQueryAll } = useResume();
 
-    console.log(resumeQueryAll.data);
+    const { data: resumes, isLoading } = resumeQueryAll;
 
     definePageMeta({
         layout: "dashboard",
     });
 
-    // Mock data
-    const mockResumes = ref([
-        {
-            id: 1,
-            title: "Software Engineer Resume",
-            imgUrl: "https://marketplace.canva.com/EAFszEvkM50/1/0/1131w/canva-simple-professional-cv-resume-J74DKa9D3nk.jpg",
-        },
-        {
-            id: 2,
-            title: "Web Developer CV",
-            imgUrl: "https://marketplace.canva.com/EAFszEvkM50/1/0/1131w/canva-simple-professional-cv-resume-J74DKa9D3nk.jpg",
-        },
-        {
-            id: 3,
-            title: "Frontend Developer",
-            imgUrl: "https://marketplace.canva.com/EAFszEvkM50/1/0/1131w/canva-simple-professional-cv-resume-J74DKa9D3nk.jpg",
-        },
-        {
-            id: 4,
-            title: "UX Designer Resume",
-            imgUrl: "https://marketplace.canva.com/EAFszEvkM50/1/0/1131w/canva-simple-professional-cv-resume-J74DKa9D3nk.jpg",
-        },
-        {
-            id: 5,
-            title: "Product Manager CV",
-            imgUrl: "https://marketplace.canva.com/EAFszEvkM50/1/0/1131w/canva-simple-professional-cv-resume-J74DKa9D3nk.jpg",
-        },
-        {
-            id: 6,
-            title: "Data Scientist",
-            imgUrl: "https://marketplace.canva.com/EAFszEvkM50/1/0/1131w/canva-simple-professional-cv-resume-J74DKa9D3nk.jpg",
-        },
-        {
-            id: 7,
-            title: "DevOps Engineer",
-            imgUrl: "https://marketplace.canva.com/EAFszEvkM50/1/0/1131w/canva-simple-professional-cv-resume-J74DKa9D3nk.jpg",
-        },
-        {
-            id: 8,
-            title: "Backend Developer",
-            imgUrl: "https://marketplace.canva.com/EAFszEvkM50/1/0/1131w/canva-simple-professional-cv-resume-J74DKa9D3nk.jpg",
-        },
-        {
-            id: 9,
-            title: "Full Stack Developer",
-            imgUrl: "https://marketplace.canva.com/EAFszEvkM50/1/0/1131w/canva-simple-professional-cv-resume-J74DKa9D3nk.jpg",
-        },
-        {
-            id: 10,
-            title: "Mobile Developer",
-            imgUrl: "https://marketplace.canva.com/EAFszEvkM50/1/0/1131w/canva-simple-professional-cv-resume-J74DKa9D3nk.jpg",
-        },
-    ]);
-
     const currentPage = ref(1);
     const pageSize = ref(8);
-    const totalItems = ref(mockResumes.value.length);
+    const totalItems = ref(resumes?.value?.data?.length);
 
     const currentItems = computed(() => {
         const start = (currentPage.value - 1) * pageSize.value;
         const end = start + pageSize.value;
-        return mockResumes.value.slice(start, end);
+        return resumes?.value?.data?.slice(start, end);
     });
 
     const handlePageChange = (page: number) => {
