@@ -31,7 +31,11 @@
             />
 
             <!-- Date of Birth -->
-            <DateInput name="dateOfBirth" label="Date of Birth" placeholder="Choose your dob" />
+            <DateInput
+                name="dateOfBirth"
+                label="Date of Birth"
+                placeholder="Choose your dob"
+            />
         </div>
 
         <!-- Password -->
@@ -42,7 +46,7 @@
             placeholder="pass1234"
         />
         <a-button class="full-width" type="primary" html-type="submit">
-            Log in
+            Sign up
         </a-button>
     </a-form>
     <div class="bottom-text">
@@ -58,39 +62,44 @@
     import { toFieldValidator } from "@vee-validate/zod";
     import { signUpSchema } from "../utils/schema";
     import type { SignupType } from "../types/auth";
+    import { useAuth } from "~/composables/useAuth";
 
-    const genderOptions =
-        [
-            {
-                value: "Male",
-                label: "Male",
-            },
-            {
-                value: "Female",
-                label: "Female",
-            },
-        ] ;
+    const genderOptions = [
+        {
+            value: "Male",
+            label: "Male",
+        },
+        {
+            value: "Female",
+            label: "Female",
+        },
+    ];
 
-        console.log(genderOptions)
     const zodResolver = toFieldValidator(signUpSchema);
     const { handleSubmit } = useForm<SignupType>({
         validationSchema: zodResolver,
     });
 
-    const onSubmit = handleSubmit(async (formValues) => {
-        console.log(formValues);
-        // try {
-        //     const data = await loginMutation.mutateAsync({
-        //         email: formValues.email,
-        //         password: formValues.password,
-        //     });
+    const { signupMutation } = useAuth();
 
-        //     if (data) {
-        //         router.push("/dashboard");
-        //     }
-        // } catch (error) {
-        //     console.error("Error logging in", error);
-        // }
+    const onSubmit = handleSubmit(async (formValues) => {
+        try {
+            const data = await signupMutation.mutateAsync({
+                firstName: formValues.firstName,
+                lastName: formValues.lastName,
+                gender: formValues.gender,
+                dateOfBirth: formValues.dateOfBirth,
+                email: formValues.email,
+                password: formValues.password,
+                confirmPassword: formValues.confirmPassword,
+            });
+
+            if (data) {
+                navigateTo("/dashboard");
+            }
+        } catch (error) {
+            console.error("Error logging in", error);
+        }
     });
 </script>
 
