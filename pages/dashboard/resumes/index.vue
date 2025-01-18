@@ -39,7 +39,9 @@
     import { ref, computed } from "vue";
     import { PlusOutlined } from "@ant-design/icons-vue";
 
+    const { resumeQueryAll } = useResume();
 
+    console.log(resumeQueryAll.data);
 
     definePageMeta({
         layout: "dashboard",

@@ -41,3 +41,47 @@ export const signUpSchema = z
         message: "Passwords do not match",
         path: ["confirmPassword"],
     });
+
+export const createResumeSchema = z.object({
+    templateId: z.string().nonempty(),
+    title: z.string().nonempty(),
+});
+
+export const updateReferenceSchema = z.object({
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    position: z.string().optional(),
+    email: z.string().email("Invalid email format"),
+    company: z.string().optional(),
+});
+
+export const updateExperienceSchema = z
+    .object({
+        jobTitle: z.string().max(100, "Max character is 100").optional(),
+        company: z.string().max(100, "Max character is 100").optional(),
+        responsibility: z
+            .string()
+            .max(250, "Max character is 250")
+            .optional(),
+        startDate: z.coerce
+            .date({
+                required_error: "Please select a start date",
+                invalid_type_error: "That's not a valid date!",
+            })
+            .optional(),
+        endDate: z.coerce
+            .date({
+                required_error: "Please select an end date",
+                invalid_type_error: "That's not a valid date!",
+            })
+            .optional(),
+    })
+    .superRefine((data, ctx) => {
+        if (data.startDate && data.endDate && data.endDate <= data.startDate) {
+            ctx.addIssue({
+                code: "custom",
+                path: ["endDate"],
+                message: "End date must be later than start date",
+            });
+        }
+    });

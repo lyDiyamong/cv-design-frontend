@@ -2,49 +2,57 @@
     <a-form-item
         class="full-width"
         :label="label"
-        :validate-status="validationStatus"
+        :validate-status="error ? 'error' : ''"
         :help="error"
     >
         <a-textarea
-            class="full-width"
-            v-model="inputValue"
-            @input="handleInput"
-            :placeholder="placeholder"
-            @blur="handleBlur"
+            :value="value"
             :auto-size="{ minRows: 3, maxRows: 5 }"
+            :placeholder="placeholder"
+            @input="handleInput"
+            @blur="handleBlur"
         />
     </a-form-item>
 </template>
 
-<script lang="ts" setup>
-    import { computed } from "vue";
+<script setup lang="ts">
     import { useField } from "vee-validate";
+    import { computed, watch } from "vue";
 
     interface Props {
         name: string;
         label: string;
         placeholder?: string;
+        initialValue?: string;
     }
 
     const props = defineProps<Props>();
+    const emit = defineEmits(["update:modelValue"]);
 
-    const {
-        value: inputValue,
-        errorMessage,
-        handleBlur,
-        setValue,
-        meta,
-    } = useField(props.name);
+    // Use vee-validate's useField
+    const { value, errorMessage, handleBlur, setValue } = useField(
+        props.name,
+        undefined,
+        { initialValue: props.initialValue }
+    );
 
-    const error = computed(() => errorMessage.value);
-    const validationStatus = computed(() => {
-        if (error.value) return "error";
-        return inputValue.value ? "success" : "";
-    });
+    // Watch for prop updates to initialValue
+    watch(
+        () => props.initialValue,
+        (newValue) => {
+            if (newValue !== undefined && newValue !== value.value) {
+                setValue(newValue);
+            }
+        }
+    );
 
-    const handleInput = (e: Event) => {
-        const target = e.target as HTMLTextAreaElement;
-        setValue(target.value);
+    // Emit input changes back to the parent
+    const handleInput = (event: Event) => {
+        const inputValue = (event.target as HTMLTextAreaElement).value;
+        setValue(inputValue);
+        emit("update:modelValue", inputValue);
     };
-</script>
 
+    // Computed validation error
+    const error = computed(() => errorMessage.value);
+</script>

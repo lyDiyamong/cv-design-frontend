@@ -13,7 +13,7 @@
         token: {
             colorPrimary: "#ff9d3d", // Your custom primary color
             borderRadius: "6px", // Global border radius
-            typographyMarginBottom: 0
+            typographyMarginBottom: 0,
         },
         // Force light mode by default
         theme: "light", // Specify "light" explicitly to disable dark mode
@@ -94,5 +94,11 @@
     }
     .border-style {
         border: 1px solid var(--color-gray-200);
+    }
+
+    .input-date {
+        border: 1px solid rgb(215, 215, 215);
+        border-radius: 6px;
+        padding: 4px;
     }
 </style>
