@@ -35,12 +35,13 @@
                 <div v-for="section in sections?.data">
                     <Experiences
                         v-if="section.type === 'experiences'"
-                        :content="section.content"
+                        :content="section.content as UpdateExperienceContent[]"
                     />
                 </div>
+                <UploadImage />
 
                 <!-- Upload image -->
-                <UploadImage />
+
                 <!-- Personal -->
                 <PersonalResume />
                 <!-- Summary -->

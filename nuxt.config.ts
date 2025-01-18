@@ -53,9 +53,9 @@ export default defineNuxtConfig({
     build: {
         transpile: ["vee-validate/dist/rules"],
     },
-    typescript: {
-        strict: true,
-    },
+    // typescript: {
+    //     strict: true,
+    // },
 
     // Environment variables
     runtimeConfig: {

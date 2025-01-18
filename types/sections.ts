@@ -76,7 +76,14 @@ export interface UpdateSectionType {
 
 export interface SectionType {
     resumeId: string;
-    type: SectionKeys;
+    type:
+        | "personal"
+        | "contact"
+        | "skills"
+        | "experiences"
+        | "educations"
+        | "languages"
+        | "references";
     content: UpdateSectionSchemasTypes[SectionKeys];
 }
 
