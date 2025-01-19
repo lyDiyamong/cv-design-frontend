@@ -1,6 +1,8 @@
 <template>
     <div class="right-section">
+        <a-button @click="saveAsPdf" type="primary">Export as PDF</a-button>
         <div
+            ref="resumeExport"
             class="resume-template"
             :style="{ backgroundImage: 'url(' + selectedTemplate + ')' }"
         >
@@ -13,30 +15,52 @@
             />
 
             <!-- Dummy data overlay on resume -->
-            <section class="personal-detail">
+            <div v-for="section in sections">
+                <section
+                    v-if="isSectionType(section, 'personal')"
+                    class="personal-detail"
+                >
+                    <h2 class="name-section">
+                        {{
+                            `${section.content.firstName} ${section.content.lastName}`
+                        }}
+                    </h2>
+                    <h3 class="title-section">
+                        {{ section.content.position }}
+                    </h3>
+                </section>
+            </div>
+            <!-- <section class="personal-detail">
                 <h2 class="name-section">{{ dummyData.name }}</h2>
                 <h3 class="title-section">{{ dummyData.jobTitle }}</h3>
-            </section>
+            </section> -->
 
             <div class="content-container">
                 <!-- The left side of Resume -->
                 <section class="left-container">
-                    <section class="contact-section">
-                        <h3 class="section-title">Contact Me</h3>
-                        <p>{{ dummyData.phoneNumber }}</p>
-                        <p>{{ dummyData.email }}</p>
-                        <p>{{ dummyData.address }}</p>
-                        <hr />
-                    </section>
+                    <div v-for="section in sections">
+                        <section
+                            v-if="isSectionType(section, 'contact')"
+                            class="contact-section"
+                        >
+                            <h3 class="section-title">Contact Me</h3>
+                            <p>{{ section.content.phone }}</p>
+                            <p>{{ section.content.email }}</p>
+                            <p>{{ section.content.address }}</p>
+                            <hr />
+                        </section>
+                    </div>
 
                     <section class="skills-section">
                         <h3 class="section-title">Skills</h3>
                         <ul>
                             <li
-                                v-for="(skill, index) in dummyData.skills"
+                                v-for="(skill, index) in skillsSection"
                                 :key="index"
                             >
-                                <span class="skill-name">{{ skill.name }}</span>
+                                <span class="skill-name">{{
+                                    skill.skill
+                                }}</span>
                                 :
                                 <span class="skill-level">{{
                                     skill.level
@@ -50,11 +74,11 @@
                         <h3 class="section-title">Language</h3>
                         <ul>
                             <li
-                                v-for="(language, index) in dummyData.languages"
+                                v-for="(language, index) in languagesSection"
                                 :key="index"
                             >
                                 <span class="language-name">{{
-                                    language.name
+                                    language.language
                                 }}</span>
                                 :
                                 <span class="language-level">{{
@@ -69,7 +93,7 @@
                         <h3 class="section-title">Reference</h3>
 
                         <div
-                            v-for="(reference, index) in dummyData.references"
+                            v-for="(reference, index) in referencesSection"
                             :key="index"
                         >
                             <p>
@@ -79,7 +103,6 @@
                             <p>{{ reference.company }}</p>
                             <p>{{ reference.position }}</p>
                             <p>{{ reference.email }}</p>
-                            <p>{{ reference.phoneNumber }}</p>
                             <br />
                         </div>
                     </section>
@@ -89,7 +112,7 @@
                 <section class="right-container">
                     <section class="summary-section">
                         <h3 class="section-title">About</h3>
-                        <p>{{ dummyData.about }}</p>
+                        <p>{{  }}</p>
                         <hr />
                     </section>
 
@@ -97,15 +120,16 @@
                         <h3 class="section-title">Experience</h3>
 
                         <div
-                            v-for="(experience, index) in dummyData.experiences"
+                            v-for="(experience, index) in experiencesSection"
                             :key="index"
                         >
                             <p>{{ experience.jobTitle }}</p>
-                            <p>{{ experience.position }}</p>
+                            <p>{{ experience.company }}</p>
                             <p>
                                 {{ experience.startDate }} -
                                 {{ experience.endDate }}
                             </p>
+                            <p>{{ experience.responsibility }}</p>
                             <br />
                         </div>
                         <hr />
@@ -115,10 +139,10 @@
                         <h3 class="section-title">Education</h3>
 
                         <div
-                            v-for="(education, index) in dummyData.educations"
+                            v-for="(education, index) in educationsSection"
                             :key="index"
                         >
-                            <p>{{ education.schoolName }}</p>
+                            <p>{{ education.school }}</p>
                             <p>{{ education.degreeMajor }}</p>
                             <p>
                                 {{ education.startDate }} -
@@ -133,16 +157,92 @@
     </div>
 </template>
 
-<script setup>
-    import { defineProps, reactive } from "vue";
+<script lang="ts" setup>
+    import html2canvas from "html2canvas";
+    import jsPDF from "jspdf";
+    import type { SectionType } from "../../types/sections";
+    import type {
+        UpdateSectionType,
+        SectionKeys,
+        UpdateSectionSchemasTypes,
+    } from "~/types/sections";
+
+    // Reference to the content you want to capture
+    const resumeExport = ref<HTMLDivElement | null>(null);
+
+    // Type guard for narrowing
+    function isSectionType<T extends SectionKeys>(
+        section: SectionType,
+        type: T
+    ): section is UpdateSectionType & {
+        type: T;
+        content: UpdateSectionSchemasTypes[T];
+    } {
+        return section.type === type;
+    }
 
     // Accept `selectedTemplate` as a prop
-    defineProps({
-        selectedTemplate: {
-            type: String,
-            required: true,
-        },
-    });
+    const { sections } = defineProps<{
+        selectedTemplate: string;
+        sections: SectionType[] | undefined;
+    }>();
+    // Find the section type dynamic
+    // Generic function to get content of any section
+    const getSectionContent = <T extends SectionKeys>(type: T) => {
+        return computed(() => {
+            // Return an empty array if sections are undefined
+            if (!sections) return [];
+
+            // Find the section of the given type and apply type guard
+            const section = sections.find((section) =>
+                isSectionType(section, type)
+            );
+            // Return content if found, otherwise an empty array
+            return section ? section.content : [];
+        });
+    };
+
+    const personalSection = getSectionContent("personal");
+    const skillsSection = getSectionContent("skills");
+    const languagesSection = getSectionContent("languages");
+    const experiencesSection = getSectionContent("experiences");
+    const educationsSection = getSectionContent("educations");
+    const referencesSection = getSectionContent("references");
+
+    defineExpose({ resumeExport });
+    const saveAsPdf = async () => {
+        if (!resumeExport.value) return;
+
+        // Capture the DOM element as a canvas
+        const canvas = await html2canvas(resumeExport.value, {
+            useCORS: true, // Allow cross-origin images
+            backgroundColor: "#fff", // Ensure a white background
+            scale: 2, // High-quality scaling
+        });
+
+        const imgData = canvas.toDataURL("image/png");
+
+        // Create PDF instance
+        const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "mm",
+            format: "a4", // A4 paper size
+        });
+
+        // A4 dimensions in pixels at 72 DPI
+        const pageWidth = 210; // mm
+        const pageHeight = 297; // mm
+
+        // Calculate image height to maintain aspect ratio
+        const imgWidth = pageWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        // Add the image to the PDF
+        pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+
+        // Save the PDF
+        pdf.save("cv.pdf");
+    };
 
     // Dummy data for the resume
     const dummyData = reactive({

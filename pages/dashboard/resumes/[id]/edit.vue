@@ -82,8 +82,11 @@
         </section>
 
         <section class="preview-resume-container">
-            <!-- Right Section -->
-            <ResumePreview :selectedTemplate="selectedTemplate" />
+            <!-- Preview Resume Section -->
+            <ResumePreview
+                :sections="sections?.data"
+                :selectedTemplate="selectedTemplate"
+            />
         </section>
     </section>
 </template>

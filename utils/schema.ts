@@ -59,6 +59,6 @@ export const updateExperienceSchema = z.object({
     jobTitle: z.string().max(100, "Max character is 100").optional(),
     company: z.string().max(100, "Max character is 100").optional(),
     responsibility: z.string().max(250, "Max character is 250").optional(),
-    startDate: z.string().min(1, "Start Date is required"),
-    endDate: z.string().min(1, "End Date is required"),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
 });
