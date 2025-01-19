@@ -16,22 +16,18 @@ export const useResume = () => {
     });
 
     const createResumeMutation = useMutation({
-        mutationFn: async (formData: FormData) => {
+        mutationFn: async (data: { title: string; previewImg: string }) => {
             const response = await $api.post<JsonResponseType<ResumeType>>(
                 "/resume",
-                formData,
-                {
-                    headers: {
-                        // Ensure this header for file uploads
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
+                data
             );
+
+            return response.data
         },
     });
 
     return {
         resumeQueryAll,
-        createResumeMutation
+        createResumeMutation,
     };
 };

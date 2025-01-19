@@ -19,13 +19,13 @@
         </div>
         <Input
             name="content.position"
-            :initial-value="content.position"
+            :initial-value="content.position || ''"
             label="Position"
             placeholder="Enter your position"
         />
         <TextArea
             name="content.summary"
-            :initial-value="content.summary"
+            :initial-value="content.summary || ''"
             label="Summary"
             placeholder="Enter your summary"
         />

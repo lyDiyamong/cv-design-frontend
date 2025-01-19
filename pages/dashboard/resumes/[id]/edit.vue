@@ -10,7 +10,7 @@
         :type="alertStore.type"
         :duration="5000"
     />
-    <SpinLoading :loading="isLoading" />
+    <!-- <SpinLoading :loading="isLoading" /> -->
 
     <section class="edit-resume-container">
         <section class="form-container">
@@ -38,7 +38,7 @@
                 </div>
             </section>
             <a-form layout="vertical" class="container-form">
-                <div v-for="section in sortedSections">
+                <div v-for="section in sortedSections" :key="section.type">
                     <!-- Upload image  -->
                     <UploadImage v-if="section.type === 'personal'" />
                     <!-- Personal -->

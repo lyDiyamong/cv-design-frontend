@@ -85,7 +85,6 @@
         validationSchema: toFieldValidator(resumeSchema),
         initialValues: {
             title: "",
-            previewImg: "",
         },
     });
 
@@ -93,6 +92,10 @@
     const showModal = () => {
         isModalVisible.value = true;
     };
+
+    const { createResumeMutation } = useResume();
+
+    const { isPending } = createResumeMutation;
 
     // Handle OK button click
     const handleOk = handleSubmit(async (formValues) => {
@@ -107,7 +110,16 @@
         }
 
         formValues.previewImg = templates[selectedTemplate.value].previewImg;
-        console.log("Resume Data:", formValues);
+        if (formValues.previewImg) {
+            const data = await createResumeMutation.mutateAsync({
+                title: formValues.title,
+                previewImg: formValues.previewImg,
+            });
+
+            if (data.data._id) {
+                navigateTo(`resumes/${data.data._id}/edit`);
+            }
+        }
 
         isModalVisible.value = false;
     });

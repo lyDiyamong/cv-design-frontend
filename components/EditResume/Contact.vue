@@ -18,7 +18,7 @@
         <Input
             name="content.address"
             label="Address"
-            :initial-value="content.address"
+            :initial-value="content.address || 'abc'"
             placeholder="Enter your address"
         />
         <div class="button-resume-container">
