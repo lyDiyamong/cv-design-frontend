@@ -2,6 +2,7 @@
     <div class="flex-between">
         <a-page-header title="Resumes" />
         <a-button type="primary" :icon="h(PlusOutlined)"> New Resume </a-button>
+        <CreateResumeModal />
     </div>
     <section class="resumes-page-container">
         <SpinLoading :loading="isLoading" />

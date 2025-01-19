@@ -7,7 +7,7 @@
     /> -->
     <a-layout-sider
         breakpoint="lg"
-        class="bg-custom-color"
+        class="bg-custom-color  sidebar-container "
         :collapsed="isCollapsed"
         :width="200"
         :collapsedWidth="80"
@@ -43,10 +43,6 @@
     import { useAlertStore } from "../../store/alert";
 
     const isCollapsed = ref(true);
-
-    const alertMessage = ref<string | null>(null);
-    const alertType = ref<"success" | "error" | "info" | "warning">("info");
-    const alertVisible = ref(false);
 
     // Sidebar hover events
     const handleMouseEnter = () => {
@@ -104,6 +100,14 @@
 </script>
 
 <style scoped>
+    .sidebar-container {
+        background-color: #ffffff;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        z-index: 10;
+        border-right: 1px solid #ddd;
+    }
     .bg-custom-color {
         background-color: #ffffff;
         transition: all 0.3s ease;

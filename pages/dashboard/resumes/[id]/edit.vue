@@ -11,32 +11,32 @@
         :duration="5000"
     />
     <SpinLoading :loading="isLoading" />
-    <section>
-        <h3>Select Template</h3>
-        <div class="template-selection">
-            <div
-                :class="[
-                    'template-image',
-                    { active: selectedTemplate === template1 },
-                ]"
-                @click="selectTemplate(template1)"
-            >
-                <img :src="template1" alt="Template 1" />
-            </div>
-            <div
-                :class="[
-                    'template-image',
-                    { active: selectedTemplate === template2 },
-                ]"
-                @click="selectTemplate(template2)"
-            >
-                <img :src="template2" alt="Template 2" />
-            </div>
-        </div>
-    </section>
 
     <section class="edit-resume-container">
         <section class="form-container">
+            <section>
+                <h3>Select Template</h3>
+                <div class="template-selection">
+                    <div
+                        :class="[
+                            'template-image',
+                            { active: selectedTemplate === template1 },
+                        ]"
+                        @click="selectTemplate(template1)"
+                    >
+                        <img :src="template1" alt="Template 1" />
+                    </div>
+                    <div
+                        :class="[
+                            'template-image',
+                            { active: selectedTemplate === template2 },
+                        ]"
+                        @click="selectTemplate(template2)"
+                    >
+                        <img :src="template2" alt="Template 2" />
+                    </div>
+                </div>
+            </section>
             <a-form layout="vertical" class="container-form">
                 <div v-for="section in sortedSections">
                     <!-- Upload image  -->
