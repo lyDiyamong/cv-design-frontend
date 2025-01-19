@@ -67,8 +67,6 @@
     });
 
     const onSubmit = handleSubmit(async (formValues) => {
-        console.log("Form submitted with values:", formValues);
-
         const data = await updateSectionMutation.mutateAsync({
             resumeId,
             updateData: formValues,

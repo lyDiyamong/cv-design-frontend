@@ -77,21 +77,36 @@
     import { toFieldValidator } from "@vee-validate/zod";
     import { DeleteOutlined } from "@ant-design/icons-vue";
     import type { UpdateLanguageContent } from "~/types/sections";
+    import { useAlertStore } from "~/store/alert";
 
+    const props = defineProps<{ content: UpdateLanguageContent[] }>();
+
+    const route = useRoute();
+
+    const resumeId = route.params.id as string;
+
+    const alertStore = useAlertStore();
     // Define the validation schema
     const LanguageSchema = z.object({
         language: z.string().optional(),
         level: z.string().optional(), // Validate that level is selected
     });
 
-    const FormSchema = z.object({
+    const formSchema = z.object({
         type: z.string(),
         content: z.array(LanguageSchema),
     });
 
+    type UpdateLanguageSchemaType = z.infer<typeof formSchema>;
+
+    const { updateSectionMutation } = useSection<
+        UpdateLanguageSchemaType,
+        UpdateLanguageContent[]
+    >();
+
     // Initialize form with validation
     const { handleSubmit, values } = useForm({
-        validationSchema: toFieldValidator(FormSchema),
+        validationSchema: toFieldValidator(formSchema),
         initialValues: {
             type: "languages",
         },
@@ -108,14 +123,22 @@
         remove(index);
     };
 
-    const onSubmit = handleSubmit((data) => {
-        console.log("Submitted data:", data);
+    // Submit form handler
+    const onSubmit = handleSubmit(async (formValues) => {
+        const data = await updateSectionMutation.mutateAsync({
+            resumeId,
+            updateData: formValues,
+        });
+
+        if (data) {
+            alertStore.showAlert({
+                message: data.message,
+                type: "success",
+                duration: 5000,
+            });
+        }
     });
 
-    // Props for languages passed from parent
-    const props = defineProps<{ content: UpdateLanguageContent[] }>();
-
-    console.log("content language", props.content);
     // Initialize form fields with languages data
     if (props.content && props.content.length > 0) {
         props.content.forEach((language) => {

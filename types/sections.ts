@@ -18,7 +18,7 @@ export interface UpdateContactContent {
 
 // Type for Skill Content
 export interface UpdateSkillContent {
-    name?: string;
+    skill?: string;
     level?: "Expert" | "Advance" | "Intermediate" | "Beginner";
 }
 

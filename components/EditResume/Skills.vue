@@ -87,7 +87,6 @@
 
     const resumeId = route.params.id as string;
 
-    
     const alertStore = useAlertStore();
 
     const props = defineProps<{ content: UpdateSkillContent[] }>();
@@ -97,8 +96,6 @@
         skill: z.string().optional(),
         level: z.string().optional(),
     });
-
-    
 
     const formSchema = z.object({
         type: z.string(),
@@ -131,8 +128,6 @@
 
     // Submit form handler
     const onSubmit = handleSubmit(async (formValues) => {
-        console.log("Form submitted with values:", formValues);
-
         const data = await updateSectionMutation.mutateAsync({
             resumeId,
             updateData: formValues,
@@ -149,7 +144,7 @@
 
     if (props.content) {
         props.content.forEach((skill) => {
-            push({ skill: skill.name, level: skill.level });
+            push({ skill: skill.skill, level: skill.level });
         });
     }
 </script>

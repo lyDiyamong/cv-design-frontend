@@ -112,24 +112,38 @@
     import { toFieldValidator } from "@vee-validate/zod";
     import { DeleteOutlined } from "@ant-design/icons-vue";
     import type { UpdateReferenceContent } from "../../types/sections";
+    import { useAlertStore } from "~/store/alert";
 
     const props = defineProps<{
         content: UpdateReferenceContent[];
     }>();
 
+    const route = useRoute();
+
+    const resumeId = route.params.id as string;
+
+    const alertStore = useAlertStore();
+
     // Form validation schema
-    const FormSchema = z.object({
+    const formSchema = z.object({
         type: z.string(),
         content: z.array(updateReferenceSchema),
     });
 
+    type UpdateReferenceSchemaType = z.infer<typeof formSchema>;
+
     // Initialize the form
     const { handleSubmit } = useForm({
-        validationSchema: toFieldValidator(FormSchema),
+        validationSchema: toFieldValidator(formSchema),
         initialValues: {
             type: "references",
         },
     });
+
+    const { updateSectionMutation } = useSection<
+        UpdateReferenceSchemaType,
+        UpdateReferenceContent[]
+    >();
 
     // Field array operations
     const { fields: content, push, remove } = useFieldArray("content");
@@ -150,9 +164,20 @@
         remove(index);
     };
 
-    // Submit handler
-    const onSubmit = handleSubmit((data) => {
-        console.log("Reference Form Submitted:", data);
+    // Submit form handler
+    const onSubmit = handleSubmit(async (formValues) => {
+        const data = await updateSectionMutation.mutateAsync({
+            resumeId,
+            updateData: formValues,
+        });
+
+        if (data) {
+            alertStore.showAlert({
+                message: data.message,
+                type: "success",
+                duration: 5000,
+            });
+        }
     });
 
     if (props.content) {
