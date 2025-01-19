@@ -10,6 +10,7 @@
         :type="alertStore.type"
         :duration="5000"
     />
+    <SpinLoading :loading="isLoading" />
     <section>
         <h3>Select Template</h3>
         <div class="template-selection">
@@ -155,7 +156,7 @@
     });
 </script>
 
-<style>
+<style scoped>
     .container-form {
         display: flex;
         flex-direction: column;

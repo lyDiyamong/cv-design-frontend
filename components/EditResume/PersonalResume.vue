@@ -2,7 +2,7 @@
     <a-typography-title style="font-size: var(--font-size-h4)">
         Personal Information
     </a-typography-title>
-    <a-form layout="vertical" @submit.prevent="onSubmit">
+    <a-form class="form-container" layout="vertical" @submit.prevent="onSubmit">
         <div class="flex-between">
             <Input
                 name="content.firstName"
@@ -29,7 +29,9 @@
             label="Summary"
             placeholder="Enter your summary"
         />
-        <a-button type="primary" html-type="submit" >Submit</a-button>
+        <div class="button-resume-container">
+            <a-button type="primary" html-type="submit">Save</a-button>
+        </div>
     </a-form>
 </template>
 

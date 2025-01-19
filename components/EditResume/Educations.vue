@@ -8,83 +8,95 @@
         </div>
 
         <a-form @submit.prevent="onSubmit" layout="vertical">
-            <div v-for="(field, index) in content" :key="index" class="form-row">
-                <section>
-                    <div class="form-row">
-                        <!-- School Name -->
-                        <a-form-item class="full-width" label="School Name">
-                            <Field
+            <div
+                v-for="(field, index) in content"
+                :key="index"
+                class="form-row"
+            >
+                <section class="flex-between">
+                    <div class="full-width">
+                        <div class="form-row">
+                            <!-- School Name -->
+                            <a-form-item class="full-width" label="School Name">
+                                <Field
+                                    class="full-width"
+                                    :name="`content.${index}.schoolName`"
+                                    as="a-input"
+                                    placeholder="School Name"
+                                />
+                                <ErrorMessage
+                                    :name="`content.${index}.schoolName`"
+                                    class="error-message"
+                                />
+                            </a-form-item>
+
+                            <!-- Degree/Major -->
+                            <a-form-item
                                 class="full-width"
-                                :name="`content.${index}.schoolName`"
-                                as="a-input"
-                                placeholder="School Name"
-                            />
-                            <ErrorMessage
-                                :name="`content.${index}.schoolName`"
-                                class="error-message"
-                            />
-                        </a-form-item>
+                                label="Degree/Major"
+                            >
+                                <Field
+                                    class="full-width"
+                                    :name="`content.${index}.degreeMajor`"
+                                    as="a-input"
+                                    placeholder="Degree/Major"
+                                />
+                                <ErrorMessage
+                                    :name="`content.${index}.degreeMajor`"
+                                    class="error-message"
+                                />
+                            </a-form-item>
+                        </div>
 
-                        <!-- Degree/Major -->
-                        <a-form-item class="full-width" label="Degree/Major">
-                            <Field
-                                class="full-width"
-                                :name="`content.${index}.degreeMajor`"
-                                as="a-input"
-                                placeholder="Degree/Major"
-                            />
-                            <ErrorMessage
-                                :name="`content.${index}.degreeMajor`"
-                                class="error-message"
-                            />
-                        </a-form-item>
+                        <div class="form-row">
+                            <!-- Start Date -->
+                            <a-form-item class="full-width" label="Start Date">
+                                <input
+                                    class="full-width input-date"
+                                    type="date"
+                                    :name="`content.${index}.startDate`"
+                                    :value="
+                                        formatDate(
+                                            props.content[index]?.startDate
+                                        )
+                                    "
+                                    @input="updateStartDate($event, index)"
+                                />
+                            </a-form-item>
+
+                            <!-- End Date -->
+                            <a-form-item class="full-width" label="End Date">
+                                <input
+                                    class="full-width input-date"
+                                    type="date"
+                                    :name="`content.${index}.endDate`"
+                                    :value="
+                                        formatDate(
+                                            props.content[index]?.endDate
+                                        )
+                                    "
+                                    @input="updateEndDate($event, index)"
+                                />
+                            </a-form-item>
+                        </div>
                     </div>
-
-                    <div class="form-row">
-                        <!-- Start Date -->
-                        <a-form-item class="full-width" label="Start Date">
-                            <input
-                                class="full-width input-date"
-                                type="date"
-                                :name="`content.${index}.startDate`"
-                                :value="
-                                    formatDate(props.content[index]?.startDate)
-                                "
-                                @input="updateStartDate($event, index)"
-                            />
-                        </a-form-item>
-
-                        <!-- End Date -->
-                        <a-form-item class="full-width" label="End Date">
-                            <input
-                                class="full-width input-date"
-                                type="date"
-                                :name="`content.${index}.endDate`"
-                                :value="
-                                    formatDate(props.content[index]?.endDate)
-                                "
-                                @input="updateEndDate($event, index)"
-                            />
-                        </a-form-item>
-                    </div>
+                    <a-button
+                        type="link"
+                        @click="removeField(index)"
+                        v-if="content.length > 0"
+                    >
+                        <DeleteOutlined :style="{ color: 'red' }" />
+                    </a-button>
                 </section>
-
-                <a-button
-                    type="link"
-                    @click="removeField(index)"
-                    v-if="content.length > 1"
-                >
-                    <DeleteOutlined :style="{ color: 'red' }" />
-                </a-button>
             </div>
 
             <a-button type="dashed" block @click="addField">
                 <span>+ Add Education</span>
             </a-button>
 
-            <a-button type="primary" html-type="submit" class="submit-btn">
-                Submit
-            </a-button>
+            <div class="button-resume-container">
+                <a-button type="primary" html-type="submit">Save</a-button>
+            </div>
         </a-form>
     </div>
 </template>
@@ -96,11 +108,19 @@
     import { DeleteOutlined } from "@ant-design/icons-vue";
     import dayjs from "dayjs";
     import type { UpdateEducationContent } from "../../types/sections";
+    import { useAlertStore } from "~/store/alert";
 
     // Props received from the parent
     const props = defineProps<{
         content: UpdateEducationContent[];
     }>();
+
+    const route = useRoute();
+
+    const resumeId = route.params.id as string;
+
+    const { updateSectionMutation } = useSection();
+    const alertStore = useAlertStore();
 
     // Validation schema for an individual education entry
     const EducationSchema = z.object({
@@ -153,9 +173,21 @@
     };
 
     // Submit form handler
-    const onSubmit = handleSubmit((data) => {
-        console.log("Submitted data:", data);
-        // Do not reset the form here
+    const onSubmit = handleSubmit(async (formValues) => {
+        console.log("Form submitted with values:", formValues);
+
+        const data = await updateSectionMutation.mutateAsync({
+            resumeId,
+            updateData: formValues,
+        });
+
+        if (data) {
+            alertStore.showAlert({
+                message: data.message,
+                type: "success",
+                duration: 5000,
+            });
+        }
     });
 </script>
 

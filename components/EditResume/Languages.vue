@@ -52,7 +52,7 @@
                 <a-button
                     type="link"
                     @click="removeField(index)"
-                    v-if="content.length > 1"
+                    v-if="content.length > 0"
                 >
                     <DeleteOutlined :style="{ color: 'red' }" />
                 </a-button>
@@ -64,9 +64,9 @@
             </a-button>
 
             <!-- Submit Button -->
-            <a-button type="primary" html-type="submit" class="submit-btn">
-                Submit
-            </a-button>
+            <div class="button-resume-container">
+                <a-button type="primary" html-type="submit">Save</a-button>
+            </div>
         </a-form>
     </div>
 </template>
@@ -88,7 +88,6 @@
         type: z.string(),
         content: z.array(LanguageSchema),
     });
-
 
     // Initialize form with validation
     const { handleSubmit, values } = useForm({
@@ -113,12 +112,10 @@
         console.log("Submitted data:", data);
     });
 
-    
-
     // Props for languages passed from parent
     const props = defineProps<{ content: UpdateLanguageContent[] }>();
 
-    console.log("content language",props.content)
+    console.log("content language", props.content);
     // Initialize form fields with languages data
     if (props.content && props.content.length > 0) {
         props.content.forEach((language) => {

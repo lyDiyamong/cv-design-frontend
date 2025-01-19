@@ -11,96 +11,97 @@
                 :key="index"
                 class="form-row"
             >
-                <section>
-                    <div class="flex-between">
-                        <!-- First Name -->
-                        <a-form-item class="full-width" label="First Name">
-                            <Field
-                                class="full-width"
-                                :name="`content.${index}.firstName`"
-                                as="a-input"
-                                placeholder="First Name"
-                            />
-                            <ErrorMessage
-                                :name="`content.${index}.firstName`"
-                                class="error-message"
-                            />
-                        </a-form-item>
+                <section class="flex-between">
+                    <div class="full-width">
+                        <div class="flex-between">
+                            <!-- First Name -->
+                            <a-form-item class="full-width" label="First Name">
+                                <Field
+                                    class="full-width"
+                                    :name="`content.${index}.firstName`"
+                                    as="a-input"
+                                    placeholder="First Name"
+                                />
+                                <ErrorMessage
+                                    :name="`content.${index}.firstName`"
+                                    class="error-message"
+                                />
+                            </a-form-item>
 
-                        <!-- Last Name -->
-                        <a-form-item class="full-width" label="Last Name">
+                            <!-- Last Name -->
+                            <a-form-item class="full-width" label="Last Name">
+                                <Field
+                                    class="full-width"
+                                    :name="`content.${index}.lastName`"
+                                    as="a-input"
+                                    placeholder="Last Name"
+                                />
+                                <ErrorMessage
+                                    :name="`content.${index}.lastName`"
+                                    class="error-message"
+                                />
+                            </a-form-item>
+                        </div>
+                        <div class="flex-between">
+                            <!-- Position -->
+                            <a-form-item class="full-width" label="Position">
+                                <Field
+                                    class="full-width"
+                                    :name="`content.${index}.position`"
+                                    as="a-input"
+                                    placeholder="Position"
+                                />
+                                <ErrorMessage
+                                    :name="`content.${index}.position`"
+                                    class="error-message"
+                                />
+                            </a-form-item>
+                            <!-- Company -->
+                            <a-form-item class="full-width" label="Company">
+                                <Field
+                                    class="full-width"
+                                    :name="`content.${index}.company`"
+                                    as="a-input"
+                                    placeholder="Company Name"
+                                />
+                                <ErrorMessage
+                                    :name="`content.${index}.company`"
+                                    class="error-message"
+                                />
+                            </a-form-item>
+                        </div>
+
+                        <!-- Email -->
+                        <a-form-item class="full-width" label="Email">
                             <Field
                                 class="full-width"
-                                :name="`content.${index}.lastName`"
+                                :name="`content.${index}.email`"
                                 as="a-input"
-                                placeholder="Last Name"
+                                placeholder="example@gmail.com"
                             />
                             <ErrorMessage
-                                :name="`content.${index}.lastName`"
+                                :name="`content.${index}.email`"
                                 class="error-message"
                             />
                         </a-form-item>
                     </div>
-                    <div class="flex-between">
-                        <!-- Position -->
-                        <a-form-item class="full-width" label="Position">
-                            <Field
-                                class="full-width"
-                                :name="`content.${index}.position`"
-                                as="a-input"
-                                placeholder="Position"
-                            />
-                            <ErrorMessage
-                                :name="`content.${index}.position`"
-                                class="error-message"
-                            />
-                        </a-form-item>
-                        <!-- Company -->
-                        <a-form-item class="full-width" label="Company">
-                            <Field
-                                class="full-width"
-                                :name="`content.${index}.company`"
-                                as="a-input"
-                                placeholder="Company Name"
-                            />
-                            <ErrorMessage
-                                :name="`content.${index}.company`"
-                                class="error-message"
-                            />
-                        </a-form-item>
-                    </div>
-
-                    <!-- Email -->
-                    <a-form-item class="full-width" label="Email">
-                        <Field
-                            class="full-width"
-                            :name="`content.${index}.email`"
-                            as="a-input"
-                            placeholder="example@gmail.com"
-                        />
-                        <ErrorMessage
-                            :name="`content.${index}.email`"
-                            class="error-message"
-                        />
-                    </a-form-item>
+                    <a-button
+                        type="link"
+                        @click="removeField(index)"
+                        v-if="content.length > 0"
+                    >
+                        <DeleteOutlined :style="{ color: 'red' }" />
+                    </a-button>
                 </section>
-
-                <a-button
-                    type="link"
-                    @click="removeField(index)"
-                    v-if="content.length > 1"
-                >
-                    <DeleteOutlined :style="{ color: 'red' }" />
-                </a-button>
             </div>
 
             <a-button type="dashed" block @click="addField">
                 <span>+ Add Reference</span>
             </a-button>
 
-            <a-button type="primary" html-type="submit" class="submit-btn">
-                Submit
-            </a-button>
+            <div class="button-resume-container">
+                <a-button type="primary" html-type="submit">Save</a-button>
+            </div>
         </a-form>
     </div>
 </template>

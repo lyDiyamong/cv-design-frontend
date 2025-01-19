@@ -101,4 +101,13 @@
         border-radius: 6px;
         padding: 4px;
     }
+    .button-resume-container {
+        width: 100%;
+        text-align: right;
+        margin-top: 16px;
+    }
+    .form-container{
+        border-radius: var(--border-radius, 6px);
+        border: 1px solid var(--border-color);
+    }
 </style>

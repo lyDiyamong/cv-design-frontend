@@ -5,14 +5,18 @@
             <p class="sub-title">Write down the specific skills</p>
         </div>
 
-        <a-form @submit.prevent="onSubmit" layout="vertical">
+        <a-form
+            class="form-container"
+            @submit.prevent="onSubmit"
+            layout="vertical"
+        >
             <div
                 v-for="(field, index) in content"
                 :key="index"
                 class="form-row"
             >
                 <!-- Skill Input -->
-                <a-form-item class="w-full" label="Skill">
+                <a-form-item class="full-width" label="Skill">
                     <Field
                         :name="`content.${index}.skill`"
                         as="a-input"
@@ -25,7 +29,7 @@
                 </a-form-item>
 
                 <!-- Level Dropdown -->
-                <a-form-item class="w-full" label="Level">
+                <a-form-item class="full-width" label="Level">
                     <Field
                         :name="`content.${index}.level`"
                         as="a-select"
@@ -43,7 +47,7 @@
                         <a-select-option value="Expert">Expert</a-select-option>
                     </Field>
                     <ErrorMessage
-                        :name="`fields.${index}.level`"
+                        :name="`content.${index}.level`"
                         class="error-message"
                     />
                 </a-form-item>
@@ -52,7 +56,7 @@
                 <a-button
                     type="link"
                     @click="removeField(index)"
-                    v-if="content.length > 1"
+                    v-if="content.length > 0"
                 >
                     <DeleteOutlined :style="{ color: 'red' }" />
                 </a-button>
@@ -64,9 +68,9 @@
             </a-button>
 
             <!-- Submit Button -->
-            <a-button type="primary" html-type="submit" class="submit-btn">
-                Submit
-            </a-button>
+            <div class="button-resume-container">
+                <a-button type="primary" html-type="submit">Save</a-button>
+            </div>
         </a-form>
     </div>
 </template>
@@ -77,20 +81,38 @@
     import { toFieldValidator } from "@vee-validate/zod";
     import { DeleteOutlined } from "@ant-design/icons-vue";
     import type { UpdateSkillContent } from "~/types/sections";
+    import { useAlertStore } from "~/store/alert";
+
+    const route = useRoute();
+
+    const resumeId = route.params.id as string;
+
+    
+    const alertStore = useAlertStore();
+
+    const props = defineProps<{ content: UpdateSkillContent[] }>();
 
     // Define the validation schema
-    const SkillSchema = z.object({
-        skill: z.string().min(1, "Skill is required"),
-        level: z.string().min(1, "Level is required"),
+    const skillSchema = z.object({
+        skill: z.string().optional(),
+        level: z.string().optional(),
     });
 
-    const FormSchema = z.object({
+    
+
+    const formSchema = z.object({
         type: z.string(),
-        content: z.array(SkillSchema),
+        content: z.array(skillSchema),
     });
+    type UpdateSkillSchemaType = z.infer<typeof formSchema>;
+
+    const { updateSectionMutation } = useSection<
+        UpdateSkillSchemaType,
+        UpdateSkillContent[]
+    >();
 
     const { handleSubmit, values } = useForm({
-        validationSchema: toFieldValidator(FormSchema),
+        validationSchema: toFieldValidator(formSchema),
         initialValues: {
             type: "skills",
         },
@@ -107,11 +129,24 @@
         remove(index);
     };
 
-    const onSubmit = handleSubmit((data) => {
-        console.log("Submitted data:", data);
+    // Submit form handler
+    const onSubmit = handleSubmit(async (formValues) => {
+        console.log("Form submitted with values:", formValues);
+
+        const data = await updateSectionMutation.mutateAsync({
+            resumeId,
+            updateData: formValues,
+        });
+
+        if (data) {
+            alertStore.showAlert({
+                message: data.message,
+                type: "success",
+                duration: 5000,
+            });
+        }
     });
 
-    const props = defineProps<{ content: UpdateSkillContent[] }>();
     if (props.content) {
         props.content.forEach((skill) => {
             push({ skill: skill.name, level: skill.level });

@@ -3,7 +3,7 @@ import type { JsonResponseType } from "~/types/json";
 import type { ResumeType } from "~/types/resume";
 import type { SectionType } from "~/types/sections";
 
-export const useSection = <T>() => {
+export const useSection = <InputT, ReturnT>() => {
     const { $api } = useNuxtApp();
     const sectionResumeQuery = (resumeId: string) =>
         useQuery({
@@ -24,9 +24,9 @@ export const useSection = <T>() => {
             updateData,
         }: {
             resumeId: string;
-            updateData: T;
+            updateData: InputT;
         }) => {
-            const response = await $api.patch<JsonResponseType<T>>(
+            const response = await $api.patch<JsonResponseType<ReturnT>>(
                 `/section/edit/resume/${resumeId}`,
                 updateData
             );

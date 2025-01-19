@@ -91,7 +91,7 @@
                 <a-button
                     type="link"
                     @click="removeField(index)"
-                    v-if="content.length > 1"
+                    v-if="content.length > 0"
                 >
                     <DeleteOutlined :style="{ color: 'red' }" />
                 </a-button>
@@ -103,9 +103,9 @@
             </a-button>
 
             <!-- Submit Button -->
-            <a-button type="primary" html-type="submit" class="submit-btn">
-                Submit
-            </a-button>
+            <div class="button-resume-container">
+                <a-button type="primary" html-type="submit">Save</a-button>
+            </div>
         </a-form>
     </div>
 </template>
@@ -117,13 +117,19 @@
     import { DeleteOutlined } from "@ant-design/icons-vue";
     import { updateExperienceSchema } from "~/utils/schema";
     import type { UpdateExperienceContent } from "~/types/sections";
+    import { useAlertStore } from "~/store/alert";
 
     // Props received from the parent
     const props = defineProps<{
         content: UpdateExperienceContent[];
     }>();
 
-    // Validation schema for an individual experience
+    const route = useRoute();
+
+    const resumeId = route.params.id as string;
+
+    const { updateSectionMutation } = useSection();
+    const alertStore = useAlertStore();
 
     // Schema for the entire form
     const FormSchema = z.object({
@@ -142,7 +148,6 @@
     });
 
     const { fields: content, push, remove } = useFieldArray("content");
-
 
     // Update startDate
     const updateStartDate = (event: Event, index: number) => {
@@ -173,8 +178,21 @@
     };
 
     // Submit form handler
-    const onSubmit = handleSubmit((data) => {
-        console.log("Submitted data:", data);
+    const onSubmit = handleSubmit(async (formValues) => {
+        console.log("Form submitted with values:", formValues);
+
+        const data = await updateSectionMutation.mutateAsync({
+            resumeId,
+            updateData: formValues,
+        });
+
+        if (data) {
+            alertStore.showAlert({
+                message: data.message,
+                type: "success",
+                duration: 5000,
+            });
+        }
     });
 </script>
 
