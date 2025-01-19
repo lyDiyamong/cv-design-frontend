@@ -1,5 +1,6 @@
 <template>
     <h2 class="text">Create an account</h2>
+    <SpinLoading :loading="isPending" />
     <a-form layout="vertical" class="full-width" @submit.prevent="onSubmit">
         <!-- Name section -->
         <div class="flex-between">
@@ -52,7 +53,9 @@
     <div class="bottom-text">
         <a-typography-text>
             Already have an account?
-            <NuxtLink style="color: var(--color-primary-main);"  to="/"> Log in </NuxtLink>
+            <NuxtLink style="color: var(--color-primary-main)" to="/">
+                Log in
+            </NuxtLink>
         </a-typography-text>
     </div>
 </template>
@@ -82,6 +85,8 @@
     });
 
     const { signupMutation } = useAuth();
+
+    const { isPending } = signupMutation;
     const alertStore = useAlertStore();
 
     const onSubmit = handleSubmit(async (formValues) => {

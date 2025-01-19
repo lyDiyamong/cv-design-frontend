@@ -9,6 +9,8 @@
             :duration="5000"
         />
 
+        <SpinLoading :loading="isLoading" />
+
         <!-- Main content area -->
         <a-layout>
             <!-- Optionally add a header -->
@@ -32,6 +34,8 @@
     const router = useRouter();
     const authStore = useAuthStore();
     const { userQuery } = useUser();
+
+    const { isLoading } = userQuery;
 
     const alertStore = useAlertStore();
 

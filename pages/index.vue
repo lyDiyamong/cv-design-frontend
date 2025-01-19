@@ -6,6 +6,8 @@
         :type="alertStore.type"
         :duration="5000"
     />
+
+    <SpinLoading :loading="isPending" />
     <a-form layout="vertical" @submit.prevent="onSubmit" class="full-width">
         <Input
             name="email"
@@ -35,13 +37,13 @@
 
     // Mutation
     import { useAuth } from "~/composables/useAuth";
-    import { useAuthStore } from "../store/auth/index";
     import { useAlertStore } from "../store/alert";
 
-    const authStore = useAuthStore();
     const alertStore = useAlertStore();
 
     const { loginMutation } = useAuth();
+
+    const { isPending } = loginMutation;
 
     const zodResolver = toFieldValidator(loginSchema);
     const { handleSubmit } = useForm<LoginType>({
