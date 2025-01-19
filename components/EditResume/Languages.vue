@@ -6,24 +6,28 @@
         </div>
 
         <a-form @submit.prevent="onSubmit" layout="vertical">
-            <div v-for="(field, index) in fields" :key="index" class="form-row">
+            <div
+                v-for="(field, index) in content"
+                :key="index"
+                class="form-row"
+            >
                 <!-- Language Field -->
-                <a-form-item class="w-full" label="Language">
+                <a-form-item class="full-width" label="Language">
                     <Field
-                        :name="`fields.${index}.language`"
+                        :name="`content.${index}.language`"
                         as="a-input"
                         placeholder="Language"
                     />
                     <ErrorMessage
-                        :name="`fields.${index}.language`"
+                        :name="`content.${index}.language`"
                         class="error-message"
                     />
                 </a-form-item>
 
                 <!-- Level Select Field -->
-                <a-form-item class="w-full" label="Level">
+                <a-form-item class="full-width" label="Level">
                     <Field
-                        :name="`fields.${index}.level`"
+                        :name="`content.${index}.level`"
                         as="a-select"
                         placeholder="Select Level"
                     >
@@ -33,13 +37,13 @@
                         <a-select-option value="Intermediate"
                             >Intermediate</a-select-option
                         >
-                        <a-select-option value="Advanced"
+                        <a-select-option value="Advance"
                             >Advanced</a-select-option
                         >
                         <a-select-option value="Fluent">Fluent</a-select-option>
                     </Field>
                     <ErrorMessage
-                        :name="`fields.${index}.level`"
+                        :name="`content.${index}.level`"
                         class="error-message"
                     />
                 </a-form-item>
@@ -48,7 +52,7 @@
                 <a-button
                     type="link"
                     @click="removeField(index)"
-                    v-if="fields.length > 1"
+                    v-if="content.length > 1"
                 >
                     <DeleteOutlined :style="{ color: 'red' }" />
                 </a-button>
@@ -76,24 +80,26 @@
 
     // Define the validation schema
     const LanguageSchema = z.object({
-        language: z.string().min(1, "Language is required"),
-        level: z.string().min(1, "Level is required"), // Validate that level is selected
+        language: z.string().optional(),
+        level: z.string().optional(), // Validate that level is selected
     });
 
     const FormSchema = z.object({
-        fields: z.array(LanguageSchema),
+        type: z.string(),
+        content: z.array(LanguageSchema),
     });
+
 
     // Initialize form with validation
     const { handleSubmit, values } = useForm({
         validationSchema: toFieldValidator(FormSchema),
         initialValues: {
-            fields: [], // This will be populated dynamically from parent data
+            type: "languages",
         },
     });
 
     // Dynamically set initial values with languages data from parent (cvData)
-    const { fields, push, remove } = useFieldArray("fields");
+    const { fields: content, push, remove } = useFieldArray("content");
 
     const addField = () => {
         push({ language: "", level: "" });
@@ -107,11 +113,15 @@
         console.log("Submitted data:", data);
     });
 
+    
+
     // Props for languages passed from parent
-    const props = defineProps<{ languages: UpdateLanguageContent[] }>();
+    const props = defineProps<{ content: UpdateLanguageContent[] }>();
+
+    console.log("content language",props.content)
     // Initialize form fields with languages data
-    if (props.languages && props.languages.length > 0) {
-        props.languages.forEach((language) => {
+    if (props.content && props.content.length > 0) {
+        props.content.forEach((language) => {
             push({ language: language.language, level: language.level });
         });
     }

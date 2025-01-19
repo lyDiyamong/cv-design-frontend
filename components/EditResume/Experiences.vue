@@ -132,7 +132,7 @@
     });
 
     // Initialize the form with validation schema and initial values
-    const { handleSubmit, values } = useForm({
+    const { handleSubmit } = useForm({
         validationSchema: toFieldValidator(FormSchema),
         initialValues: {
             // Use the passed experiences or an empty array

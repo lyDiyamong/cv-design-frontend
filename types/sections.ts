@@ -6,6 +6,7 @@ export interface UpdatePersonalContent {
     lastName?: string;
     position?: string;
     summary?: string;
+    imgUrl?: string;
 }
 
 // Type for Contact Content

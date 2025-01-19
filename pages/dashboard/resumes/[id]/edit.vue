@@ -31,81 +31,47 @@
 
     <section class="edit-resume-container">
         <section class="form-container">
-            <a-form layout="vertical">
-                <div v-for="section in sections?.data">
-                    <Experiences
-                        v-if="section.type === 'experiences'"
-                        :content="section.content as UpdateExperienceContent[]"
+            <a-form layout="vertical" class="container-form">
+                <div v-for="section in sortedSections">
+                    <!-- Upload image  -->
+                    <UploadImage v-if="section.type === 'personal'" />
+                    <!-- Personal -->
+                    <PersonalResume
+                        v-if="section.type === 'personal'"
+                        :content="section.content as UpdatePersonalContent"
                     />
                     <Contact
                         v-if="section.type === 'contact'"
                         :content="section.content as UpdateContactContent"
                     />
+
+                    <!-- Experiences -->
+                    <Experiences
+                        v-if="section.type === 'experiences'"
+                        :content="section.content as UpdateExperienceContent[]"
+                    />
+                    <!-- Educations -->
+                    <Educations
+                        v-if="section.type === 'educations'"
+                        :content="section.content as UpdateEducationContent[]"
+                    />
+                    <!-- Skills -->
+
+                    <Skills
+                        v-if="section.type === 'skills'"
+                        :content="section.content as UpdateSkillContent[]"
+                    />
+                    <!-- Languages -->
+                    <Languages
+                        v-if="section.type === 'languages'"
+                        :content="section.content as UpdateLanguageContent[]"
+                    />
+                    <!-- References -->
+                    <References
+                        v-if="section.type === 'references'"
+                        :content="section.content as UpdateReferenceContent[]"
+                    />
                 </div>
-                <UploadImage />
-
-                <!-- Upload image  -->
-
-                <!-- Personal -->
-                // <PersonalResume />
-                <!-- Summary -->
-                <Summary />
-                <!-- Experiences -->
-                <a-typography-title
-                    style="font-size: var(--font-size-h4); margin-top: 24px"
-                >
-                    Experiences
-                </a-typography-title>
-
-                <!-- <Experiences
-                            v-if="section.type === 'Experiences'"
-                            :experiences="section.content || ''"
-                        /> -->
-
-                <!-- Educations -->
-                <a-typography-title
-                    style="font-size: var(--font-size-h4); margin-top: 24px"
-                >
-                    Educations
-                </a-typography-title>
-
-                <!-- <Educations
-                            v-if="section.type === 'Education'"
-                            :education="section.content || ''"
-                            :degreeMajor="section.content?.degreeMajor || ''"
-                            :schoolName="section.content?.schoolName || ''"
-                            :startDate="section.content?.startDate || ''"
-                            :endDate="section.content?.endDate || ''"
-                        /> -->
-                <!-- <Educations /> -->
-
-                <!-- Skills -->
-                <a-typography-title
-                    style="font-size: var(--font-size-h4); margin-top: 24px"
-                >
-                    Skills
-                </a-typography-title>
-                <!-- <Skills
-                            v-if="section.type === 'Skills'"
-                            :skills="section.content || ''"
-                        /> -->
-                <!-- <Skills /> -->
-
-                <!-- Languages -->
-                <a-typography-title
-                    style="font-size: var(--font-size-h4); margin-top: 24px"
-                >
-                    Languages
-                </a-typography-title>
-
-                <!-- <Languages
-                            v-if="section.type === 'Languages'"
-                            :languages="section.content || ''"
-                        /> -->
-                <!-- <Languages /> -->
-
-                <!-- References -->
-                <!-- <References /> -->
             </a-form>
         </section>
 
@@ -117,7 +83,15 @@
 </template>
 
 <script lang="ts" setup>
-    import type { UpdateExperienceContent } from "~/types/sections";
+    import type {
+        UpdateContactContent,
+        UpdateExperienceContent,
+        UpdatePersonalContent,
+        UpdateEducationContent,
+        UpdateLanguageContent,
+        UpdateReferenceContent,
+        UpdateSkillContent,
+    } from "~/types/sections";
 
     definePageMeta({
         layout: "dashboard",
@@ -152,9 +126,34 @@
     const selectTemplate = (template: any) => {
         selectedTemplate.value = template;
     };
+
+    // Define the desired order of sections
+    const desiredOrder = [
+        "personal",
+        "contact",
+        "experiences",
+        "educations",
+        "skills",
+        "languages",
+        "references",
+    ];
+
+    // Sort sections.data based on the desired order
+    const sortedSections = computed(() => {
+        if (!sections.value?.data) return [];
+        return [...sections.value?.data].sort(
+            (a, b) =>
+                desiredOrder.indexOf(a.type) - desiredOrder.indexOf(b.type)
+        );
+    });
 </script>
 
 <style>
+    .container-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
     .edit-resume-container {
         margin-top: 32px;
         display: flex;

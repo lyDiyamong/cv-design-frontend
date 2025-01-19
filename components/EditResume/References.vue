@@ -1,102 +1,189 @@
 <template>
-    <section>
+    <div>
         <div>
             <h3>Reference</h3>
             <p class="sub-title">Tell about the Reference person</p>
         </div>
 
         <a-form @submit.prevent="onSubmit" layout="vertical">
-            <div class="flex-form-group">
-                <Input
-                    :initial-value="formValues.refFirstName"
-                    name="firstName"
-                    placeholder="First Name"
-                    label="First Name"
-                />
-                <Input
-                    :initial-value="formValues.refLastName"
-                    name="lastName"
-                    placeholder="Last Name"
-                    label="Last Name"
-                />
+            <div
+                v-for="(field, index) in content"
+                :key="index"
+                class="form-row"
+            >
+                <section>
+                    <div class="flex-between">
+                        <!-- First Name -->
+                        <a-form-item class="full-width" label="First Name">
+                            <Field
+                                class="full-width"
+                                :name="`content.${index}.firstName`"
+                                as="a-input"
+                                placeholder="First Name"
+                            />
+                            <ErrorMessage
+                                :name="`content.${index}.firstName`"
+                                class="error-message"
+                            />
+                        </a-form-item>
+
+                        <!-- Last Name -->
+                        <a-form-item class="full-width" label="Last Name">
+                            <Field
+                                class="full-width"
+                                :name="`content.${index}.lastName`"
+                                as="a-input"
+                                placeholder="Last Name"
+                            />
+                            <ErrorMessage
+                                :name="`content.${index}.lastName`"
+                                class="error-message"
+                            />
+                        </a-form-item>
+                    </div>
+                    <div class="flex-between">
+                        <!-- Position -->
+                        <a-form-item class="full-width" label="Position">
+                            <Field
+                                class="full-width"
+                                :name="`content.${index}.position`"
+                                as="a-input"
+                                placeholder="Position"
+                            />
+                            <ErrorMessage
+                                :name="`content.${index}.position`"
+                                class="error-message"
+                            />
+                        </a-form-item>
+                        <!-- Company -->
+                        <a-form-item class="full-width" label="Company">
+                            <Field
+                                class="full-width"
+                                :name="`content.${index}.company`"
+                                as="a-input"
+                                placeholder="Company Name"
+                            />
+                            <ErrorMessage
+                                :name="`content.${index}.company`"
+                                class="error-message"
+                            />
+                        </a-form-item>
+                    </div>
+
+                    <!-- Email -->
+                    <a-form-item class="full-width" label="Email">
+                        <Field
+                            class="full-width"
+                            :name="`content.${index}.email`"
+                            as="a-input"
+                            placeholder="example@gmail.com"
+                        />
+                        <ErrorMessage
+                            :name="`content.${index}.email`"
+                            class="error-message"
+                        />
+                    </a-form-item>
+                </section>
+
+                <a-button
+                    type="link"
+                    @click="removeField(index)"
+                    v-if="content.length > 1"
+                >
+                    <DeleteOutlined :style="{ color: 'red' }" />
+                </a-button>
             </div>
 
-            <div class="flex-form-group">
-                <Input
-                    :initial-value="formValues.refPosition"
-                    name="position"
-                    placeholder="Position"
-                    label="Position"
-                />
-                <Input
-                    :initial-value="formValues.refEmail"
-                    name="email"
-                    placeholder="example@gmail.com"
-                    label="Email"
-                />
-            </div>
+            <a-button type="dashed" block @click="addField">
+                <span>+ Add Reference</span>
+            </a-button>
 
-            <div class="flex-form-group">
-                <Input
-                    :initial-value="formValues.refCompany"
-                    name="company"
-                    placeholder="Company Name"
-                    label="Company"
-                />
-            </div>
-
-            <a-form-item>
-                <a-button type="primary" html-type="submit">Submit</a-button>
-            </a-form-item>
+            <a-button type="primary" html-type="submit" class="submit-btn">
+                Submit
+            </a-button>
         </a-form>
-        <!-- 
-      <div>
-        <h3>Reference Information</h3>
-        <p>First Name: {{ formValues.refFirstName }}</p>
-        <p>Last Name: {{ formValues.refLastName }}</p>
-        <p>Position: {{ formValues.refPosition }}</p>
-        <p>Email: {{ formValues.refEmail }}</p>
-        <p>Phone Number: {{ formValues.refPhoneNumber }}</p>
-        <p>Company: {{ formValues.refCompany }}</p>
-      </div> -->
-    </section>
+    </div>
 </template>
 
 <script setup lang="ts">
-    import { useForm } from "vee-validate";
-    import * as z from "zod";
+    import { useFieldArray, useForm, Field, ErrorMessage } from "vee-validate";
+    import { z } from "zod";
     import { toFieldValidator } from "@vee-validate/zod";
-    import type { UpdateReferenceContent } from "~/types/sections";
-    import { updateReferenceSchema } from "~/utils/schema";
+    import { DeleteOutlined } from "@ant-design/icons-vue";
+    import type { UpdateReferenceContent } from "../../types/sections";
 
-    const props = defineProps<{ references: UpdateReferenceContent[] }>();
+    const props = defineProps<{
+        content: UpdateReferenceContent[];
+    }>();
 
-    const formValues = reactive({
-        refFirstName: props?.references[0]?.firstName || "",
-        refLastName: props?.references[0]?.lastName || "",
-        refPosition: props?.references[0]?.position || "",
-        refEmail: props?.references[0]?.email || "",
-        refCompany: props?.references[0]?.company || "",
+    // Form validation schema
+    const FormSchema = z.object({
+        type: z.string(),
+        content: z.array(updateReferenceSchema),
     });
 
-    const zodResolver = toFieldValidator(updateReferenceSchema);
-
+    // Initialize the form
     const { handleSubmit } = useForm({
-        validationSchema: zodResolver,
+        validationSchema: toFieldValidator(FormSchema),
+        initialValues: {
+            type: "references",
+        },
     });
 
-    const onSubmit = handleSubmit((values) => {
-        console.log("Reference Form Submitted:", values);
+    // Field array operations
+    const { fields: content, push, remove } = useFieldArray("content");
+
+    // Add a new field
+    const addField = () => {
+        push({
+            firstName: "",
+            lastName: "",
+            position: "",
+            email: "",
+            company: "",
+        });
+    };
+
+    // Remove a field
+    const removeField = (index: number) => {
+        remove(index);
+    };
+
+    // Submit handler
+    const onSubmit = handleSubmit((data) => {
+        console.log("Reference Form Submitted:", data);
     });
+
+    if (props.content) {
+        props.content.forEach((reference) => {
+            push({
+                firstName: reference.firstName,
+                lastName: reference.lastName,
+                email: reference.email,
+                company: reference.company,
+                position: reference.position,
+            });
+        });
+    }
 </script>
 
 <style scoped>
-    .flex-form-group {
+    .form-row {
         display: flex;
+        flex-wrap: wrap;
         gap: 16px;
     }
-    .sub-title {
-        color: #888;
-        font-size: 14px;
+
+    .full-width {
+        width: 100%;
+    }
+
+    .submit-btn {
+        margin-top: 1rem;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 0.9rem;
     }
 </style>

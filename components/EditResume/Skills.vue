@@ -6,16 +6,20 @@
         </div>
 
         <a-form @submit.prevent="onSubmit" layout="vertical">
-            <div v-for="(field, index) in fields" :key="index" class="form-row">
+            <div
+                v-for="(field, index) in content"
+                :key="index"
+                class="form-row"
+            >
                 <!-- Skill Input -->
                 <a-form-item class="w-full" label="Skill">
                     <Field
-                        :name="`fields.${index}.skill`"
+                        :name="`content.${index}.skill`"
                         as="a-input"
                         placeholder="Skill"
                     />
                     <ErrorMessage
-                        :name="`fields.${index}.skill`"
+                        :name="`content.${index}.skill`"
                         class="error-message"
                     />
                 </a-form-item>
@@ -23,7 +27,7 @@
                 <!-- Level Dropdown -->
                 <a-form-item class="w-full" label="Level">
                     <Field
-                        :name="`fields.${index}.level`"
+                        :name="`content.${index}.level`"
                         as="a-select"
                         placeholder="Select level"
                     >
@@ -33,7 +37,7 @@
                         <a-select-option value="Intermediate"
                             >Intermediate</a-select-option
                         >
-                        <a-select-option value="Advanced"
+                        <a-select-option value="Advance"
                             >Advanced</a-select-option
                         >
                         <a-select-option value="Expert">Expert</a-select-option>
@@ -48,7 +52,7 @@
                 <a-button
                     type="link"
                     @click="removeField(index)"
-                    v-if="fields.length > 1"
+                    v-if="content.length > 1"
                 >
                     <DeleteOutlined :style="{ color: 'red' }" />
                 </a-button>
@@ -81,18 +85,19 @@
     });
 
     const FormSchema = z.object({
-        fields: z.array(SkillSchema),
+        type: z.string(),
+        content: z.array(SkillSchema),
     });
 
     const { handleSubmit, values } = useForm({
         validationSchema: toFieldValidator(FormSchema),
         initialValues: {
-            fields: [], // This will be populated dynamically from parent data
+            type: "skills",
         },
     });
 
     // Dynamically set initial values with skills data from parent (cvData)
-    const { fields, push, remove } = useFieldArray("fields");
+    const { fields: content, push, remove } = useFieldArray("content");
 
     const addField = () => {
         push({ skill: "", level: "" });
@@ -106,9 +111,9 @@
         console.log("Submitted data:", data);
     });
 
-    const props = defineProps<{ skills: UpdateSkillContent[] }>();
-    if (props.skills) {
-        props.skills.forEach((skill) => {
+    const props = defineProps<{ content: UpdateSkillContent[] }>();
+    if (props.content) {
+        props.content.forEach((skill) => {
             push({ skill: skill.name, level: skill.level });
         });
     }

@@ -8,33 +8,33 @@
         </div>
 
         <a-form @submit.prevent="onSubmit" layout="vertical">
-            <div v-for="(field, index) in fields" :key="index" class="form-row">
+            <div v-for="(field, index) in content" :key="index" class="form-row">
                 <section>
                     <div class="form-row">
                         <!-- School Name -->
-                        <a-form-item class="w-full" label="School Name">
+                        <a-form-item class="full-width" label="School Name">
                             <Field
-                                class="w-full"
-                                :name="`fields.${index}.schoolName`"
+                                class="full-width"
+                                :name="`content.${index}.schoolName`"
                                 as="a-input"
                                 placeholder="School Name"
                             />
                             <ErrorMessage
-                                :name="`fields.${index}.schoolName`"
+                                :name="`content.${index}.schoolName`"
                                 class="error-message"
                             />
                         </a-form-item>
 
                         <!-- Degree/Major -->
-                        <a-form-item class="w-full" label="Degree/Major">
+                        <a-form-item class="full-width" label="Degree/Major">
                             <Field
-                                class="w-full"
-                                :name="`fields.${index}.degreeMajor`"
+                                class="full-width"
+                                :name="`content.${index}.degreeMajor`"
                                 as="a-input"
                                 placeholder="Degree/Major"
                             />
                             <ErrorMessage
-                                :name="`fields.${index}.degreeMajor`"
+                                :name="`content.${index}.degreeMajor`"
                                 class="error-message"
                             />
                         </a-form-item>
@@ -42,28 +42,26 @@
 
                     <div class="form-row">
                         <!-- Start Date -->
-                        <a-form-item class="w-full" label="Start Date">
+                        <a-form-item class="full-width" label="Start Date">
                             <input
-                                class="w-full input-date"
+                                class="full-width input-date"
                                 type="date"
-                                :name="`fields.${index}.startDate`"
+                                :name="`content.${index}.startDate`"
                                 :value="
-                                    formatDate(
-                                        props.education[index]?.startDate
-                                    )
+                                    formatDate(props.content[index]?.startDate)
                                 "
                                 @input="updateStartDate($event, index)"
                             />
                         </a-form-item>
 
                         <!-- End Date -->
-                        <a-form-item class="w-full" label="End Date">
+                        <a-form-item class="full-width" label="End Date">
                             <input
-                                class="w-full input-date"
+                                class="full-width input-date"
                                 type="date"
-                                :name="`fields.${index}.endDate`"
+                                :name="`content.${index}.endDate`"
                                 :value="
-                                    formatDate(props.education[index]?.endDate)
+                                    formatDate(props.content[index]?.endDate)
                                 "
                                 @input="updateEndDate($event, index)"
                             />
@@ -74,7 +72,7 @@
                 <a-button
                     type="link"
                     @click="removeField(index)"
-                    v-if="fields.length > 1"
+                    v-if="content.length > 1"
                 >
                     <DeleteOutlined :style="{ color: 'red' }" />
                 </a-button>
@@ -97,42 +95,33 @@
     import { toFieldValidator } from "@vee-validate/zod";
     import { DeleteOutlined } from "@ant-design/icons-vue";
     import dayjs from "dayjs";
+    import type { UpdateEducationContent } from "../../types/sections";
 
     // Props received from the parent
     const props = defineProps<{
-        education: Array<{
-            schoolName: string;
-            degreeMajor: string;
-            startDate: string;
-            endDate: string;
-        }>;
+        content: UpdateEducationContent[];
     }>();
 
     // Validation schema for an individual education entry
     const EducationSchema = z.object({
-        schoolName: z.string().min(1, "School Name is required"),
-        degreeMajor: z.string().min(1, "Degree/Major is required"),
-        startDate: z.string().min(1, "Start Date is required"),
-        endDate: z.string().min(1, "End Date is required"),
+        schoolName: z.string().optional(),
+        degreeMajor: z.string().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
     });
 
     const FormSchema = z.object({
-        fields: z.array(EducationSchema),
+        type: z.string(),
+        content: z.array(EducationSchema),
     });
 
     const { handleSubmit, values } = useForm({
         validationSchema: toFieldValidator(FormSchema),
         initialValues: {
-            fields: props.education || [],
+            type: "educations",
+            content: props.content || [],
         },
     });
-
-    // const { fields, push, remove } = useFieldArray<{
-    //   schoolName: string;
-    //   degreeMajor: string;
-    //   startDate: string;
-    //   endDate: string;
-    // }>("fields");
 
     // Add a new field
     const addField = () => {
@@ -149,23 +138,18 @@
         return dayjs(date).format("YYYY-MM-DD"); // Ensure the date is in the correct format
     };
 
-    const { fields, push, remove } = useFieldArray<{
-        schoolName: string;
-        degreeMajor: string;
-        startDate: string;
-        endDate: string;
-    }>("fields");
+    const { fields: content, push, remove } = useFieldArray("content");
 
+    // Update startDate
     const updateStartDate = (event: Event, index: number) => {
         const newStartDate = (event.target as HTMLInputElement).value;
-        const { value } = fields.value[index];
-        value.startDate = newStartDate;
+        props.content[index].startDate = newStartDate;
     };
 
+    // Update endDate
     const updateEndDate = (event: Event, index: number) => {
         const newEndDate = (event.target as HTMLInputElement).value;
-        const { value } = fields.value[index];
-        value.endDate = newEndDate;
+        props.content[index].endDate = newEndDate;
     };
 
     // Submit form handler
