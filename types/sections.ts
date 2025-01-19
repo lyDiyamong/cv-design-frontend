@@ -26,16 +26,16 @@ export interface UpdateExperienceContent {
     jobTitle?: string;
     responsibility?: string;
     company: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
 }
 
 // Type for Education Content
 export interface UpdateEducationContent {
     school?: string;
     degreeMajor?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate: string;
+    endDate: string;
 }
 
 // Type for Language Content

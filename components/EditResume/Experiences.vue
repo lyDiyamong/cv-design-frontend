@@ -28,12 +28,12 @@
                     <!-- Position -->
                     <a-form-item label="Position">
                         <Field
-                            :name="`content.${index}.position`"
+                            :name="`content.${index}.company`"
                             as="a-input"
-                            placeholder="Position"
+                            placeholder="Company"
                         />
                         <ErrorMessage
-                            :name="`content.${index}.position`"
+                            :name="`content.${index}.company`"
                             class="error-message"
                         />
                     </a-form-item>
@@ -52,30 +52,31 @@
 
                 <div class="flex-between">
                     <!-- Start Date -->
-                    <a-form-item class="w-full" label="Start Date">
-                        <!-- <input
-                            class="w-full input-date"
+
+                    <a-form-item class="full-width" label="Start Date">
+                        <input
+                            class="full-width input-date"
                             type="date"
-                            :name="`content.${index}.startDate`"
-                            :value="props.content[index]?.startDate"
+                            :name="`fields.${index}.startDate`"
+                            :value="formatDate(props.content[index]?.startDate)"
                             @input="updateStartDate($event, index)"
-                        /> -->
+                        />
                     </a-form-item>
 
                     <!-- End Date -->
-                    <a-form-item class="w-full" label="End Date">
-                        <!-- <input
-                            class="w-full input-date"
+                    <a-form-item class="full-width" label="End Date">
+                        <input
+                            class="full-width input-date"
                             type="date"
                             :name="`content.${index}.endDate`"
                             :value="props.content[index]?.endDate"
                             @input="updateEndDate($event, index)"
-                        /> -->
+                        />
                     </a-form-item>
                 </div>
 
                 <!-- Description -->
-                <TextAreaForm
+                <TextArea
                     :name="`content.${index}.description`"
                     label="Description"
                     placeholder="Write a brief description of your responsibilities"
@@ -114,11 +115,9 @@
     import { z } from "zod";
     import { toFieldValidator } from "@vee-validate/zod";
     import { DeleteOutlined } from "@ant-design/icons-vue";
-    import dayjs from "dayjs";
     import { updateExperienceSchema } from "~/utils/schema";
-import type { UpdateExperienceContent } from "~/types/sections";
+    import type { UpdateExperienceContent } from "~/types/sections";
 
-    type UpdateExperienceType = z.infer<typeof updateExperienceSchema>;
     // Props received from the parent
     const props = defineProps<{
         content: UpdateExperienceContent[];
@@ -144,20 +143,17 @@ import type { UpdateExperienceContent } from "~/types/sections";
 
     const { fields: content, push, remove } = useFieldArray("content");
 
-    // Format date to the required format for the input[type="date"] field (YYYY-MM-DD)
-    // const formatDate = (date: string) => {
-    //     return dayjs(date).format("YYYY-MM-DD"); // Ensure the date is in the correct format
-    // };
 
     // Update startDate
     const updateStartDate = (event: Event, index: number) => {
-        const newStartDate = new Date((event.target as HTMLInputElement).value);
-        if (values.content) values.content[index].startDate = newStartDate; // Handle invalid dates
+        const newStartDate = (event.target as HTMLInputElement).value;
+        props.content[index].startDate = newStartDate;
     };
 
+    // Update endDate
     const updateEndDate = (event: Event, index: number) => {
-        const newEndDate = new Date((event.target as HTMLInputElement).value);
-        if (values.content) values.content[index].endDate = newEndDate; // Handle invalid dates
+        const newEndDate = (event.target as HTMLInputElement).value;
+        props.content[index].endDate = newEndDate;
     };
 
     // Add a new field

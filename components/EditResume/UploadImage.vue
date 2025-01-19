@@ -1,5 +1,5 @@
 <template>
-    <div class="flex-between" style="margin-bottom: 16px;">
+    <div class="flex-between" style="margin-bottom: 16px">
         <a-upload
             v-model:file-list="fileList"
             name="avatar"
@@ -18,7 +18,7 @@
             </div>
         </a-upload>
 
-        <a-button style="align-self: flex-end;" type="primary" >Save</a-button>
+        <a-button style="align-self: flex-end" type="primary">Save</a-button>
     </div>
 </template>
 
@@ -27,6 +27,12 @@
     import { PlusOutlined, LoadingOutlined } from "@ant-design/icons-vue";
     import { message } from "ant-design-vue";
     import type { UploadChangeParam, UploadFile } from "ant-design-vue";
+
+    interface Props {
+        imgUrl?: string;
+    }
+
+    const { imgUrl } = defineProps<Props>();
 
     // Improved getBase64 function using Promise and proper type handling
     const getBase64 = (img: Blob): Promise<string> => {
@@ -40,8 +46,16 @@
 
     const fileList = ref<UploadFile[]>([]); // List of uploaded files
     const loading = ref<boolean>(false); // Loading state
-    const imageUrl = ref<string>(""); // To store the base64 image URL
+    const imageUrl = ref<string>(imgUrl || ""); // To store the base64 image URL
 
+    watch(
+        () => imgUrl,
+        (newUrl) => {
+            if (newUrl) {
+                imageUrl.value = newUrl;
+            }
+        }
+    );
     // Handle file change, such as upload start, success, and error
     const handleChange = (info: UploadChangeParam) => {
         if (info.file.status === "uploading") {

@@ -38,6 +38,7 @@ export class ApiService {
         if (error.response?.status === 401 && tokens?.refreshToken) {
             try {
                 const newTokens = await this.refreshTokens();
+                console.log("mew ", newTokens)
                 updateTokens(newTokens);
 
                 // Retry the original request

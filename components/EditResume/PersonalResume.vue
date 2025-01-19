@@ -33,6 +33,7 @@
                     placeholder="Enter your phone number"
                 />
             </div>
+            <Input name="address" label="Address" placeholder="Enter your address" />
             <TextArea
                 name="summary"
                 label="Summary"
@@ -46,6 +47,11 @@
     import { useForm } from "vee-validate";
     import { toFieldValidator } from "@vee-validate/zod";
     import * as z from "zod";
+import { UpdateContactContent } from '../../types/sections';
+
+    const props = defineProps<{
+        content: UpdateContactContent[];
+    }>();
 
     const schema = z.object({
         firstName: z.string().min(1, "First name is required"),

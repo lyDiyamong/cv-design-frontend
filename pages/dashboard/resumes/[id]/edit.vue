@@ -37,13 +37,17 @@
                         v-if="section.type === 'experiences'"
                         :content="section.content as UpdateExperienceContent[]"
                     />
+                    <Contact
+                        v-if="section.type === 'contact'"
+                        :content="section.content as UpdateContactContent"
+                    />
                 </div>
                 <UploadImage />
 
-                <!-- Upload image -->
+                <!-- Upload image  -->
 
                 <!-- Personal -->
-                <PersonalResume />
+                // <PersonalResume />
                 <!-- Summary -->
                 <Summary />
                 <!-- Experiences -->
@@ -139,9 +143,9 @@
 
     // Template selection
     const template1 =
-        "https://cv-design-assets-images.s3.ap-southeast-2.amazonaws.com/template/ResumeTemplateRT.jpg";
+        "https://cv-design-assets-images.s3.ap-southeast-2.amazonaws.com/template/ResumeYamong.jpg";
     const template2 =
-        "https://cv-design-assets-images.s3.ap-southeast-2.amazonaws.com/template/ResumeTemplateRT2.jpg";
+        "https://cv-design-assets-images.s3.ap-southeast-2.amazonaws.com/template/ResumeYamong2.jpg";
 
     const selectedTemplate = ref(template1);
 
