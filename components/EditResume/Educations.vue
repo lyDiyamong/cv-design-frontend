@@ -119,24 +119,30 @@
 
     const resumeId = route.params.id as string;
 
-    const { updateSectionMutation } = useSection();
     const alertStore = useAlertStore();
 
     // Validation schema for an individual education entry
-    const EducationSchema = z.object({
+    const educationSchema = z.object({
         schoolName: z.string().optional(),
         degreeMajor: z.string().optional(),
         startDate: z.string().optional(),
         endDate: z.string().optional(),
     });
 
-    const FormSchema = z.object({
+    const formSchema = z.object({
         type: z.string(),
-        content: z.array(EducationSchema),
+        content: z.array(educationSchema),
     });
 
+    type UpdateEducationSchemaType = z.infer<typeof formSchema>;
+
+    const { updateSectionMutation } = useSection<
+        UpdateEducationSchemaType,
+        UpdateEducationContent[]
+    >();
+
     const { handleSubmit, values } = useForm({
-        validationSchema: toFieldValidator(FormSchema),
+        validationSchema: toFieldValidator(formSchema),
         initialValues: {
             type: "educations",
             content: props.content || [],

@@ -43,10 +43,9 @@
 
     const resumeId = route.params.id as string;
 
-    const { updateSectionMutation } = useSection();
     const alertStore = useAlertStore();
 
-    const schema = z.object({
+    const formSchema = z.object({
         type: z.string(),
         content: z
             .object({
@@ -57,9 +56,15 @@
             .optional(),
     });
 
-    const zodResolver = toFieldValidator(schema);
-    type FormSchema = z.infer<typeof schema>;
-    const { handleSubmit, values } = useForm<FormSchema>({
+    type UpdateContactSchemaType = z.infer<typeof formSchema>;
+
+    const { updateSectionMutation } = useSection<
+        UpdateContactSchemaType,
+        UpdateContactContent
+    >();
+
+    const zodResolver = toFieldValidator(formSchema);
+    const { handleSubmit, values } = useForm({
         validationSchema: zodResolver,
         initialValues: {
             type: "contact",

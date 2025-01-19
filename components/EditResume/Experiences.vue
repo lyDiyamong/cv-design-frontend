@@ -128,24 +128,30 @@
 
     const resumeId = route.params.id as string;
 
-    const { updateSectionMutation } = useSection();
     const alertStore = useAlertStore();
 
     // Schema for the entire form
-    const FormSchema = z.object({
+    const formSchema = z.object({
         type: z.string(),
         content: z.array(updateExperienceSchema),
     });
 
+    type UpdateExperienceSchemaType = z.infer<typeof formSchema>;
+
     // Initialize the form with validation schema and initial values
     const { handleSubmit } = useForm({
-        validationSchema: toFieldValidator(FormSchema),
+        validationSchema: toFieldValidator(formSchema),
         initialValues: {
             // Use the passed experiences or an empty array
             content: props.content || [],
             type: "experiences",
         },
     });
+
+    const { updateSectionMutation } = useSection<
+        UpdateExperienceSchemaType,
+        UpdateExperienceContent[]
+    >();
 
     const { fields: content, push, remove } = useFieldArray("content");
 

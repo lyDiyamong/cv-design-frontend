@@ -50,10 +50,9 @@
 
     const resumeId = route.params.id as string;
 
-    const { updateSectionMutation } = useSection();
     const alertStore = useAlertStore();
 
-    const schema = z.object({
+    const formSchema = z.object({
         type: z.string(),
         content: z.object({
             firstName: z.string().min(1, "First name is required"),
@@ -63,9 +62,15 @@
         }),
     });
 
-    const zodResolver = toFieldValidator(schema);
-    type FormSchema = z.infer<typeof schema>;
-    const { handleSubmit } = useForm<FormSchema>({
+    type UpdatePersonalSchemaType = z.infer<typeof formSchema>;
+
+    const { updateSectionMutation } = useSection<
+        UpdatePersonalSchemaType,
+        UpdatePersonalContent
+    >();
+
+    const zodResolver = toFieldValidator(formSchema);
+    const { handleSubmit } = useForm({
         validationSchema: zodResolver,
         initialValues: {
             type: "personal",
