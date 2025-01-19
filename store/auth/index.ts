@@ -28,7 +28,7 @@ export const useAuthStore = defineStore("auth", {
         },
 
         setUser(userData: User) {
-            console.log("Setting user in store:", userData); // Log user data
+            // console.log("Setting user in store:", userData); // Log user data
             this.user = userData;
         },
 
@@ -37,7 +37,7 @@ export const useAuthStore = defineStore("auth", {
             this.tokens = null;
         },
         setMessage(message: string) {
-            console.log("message set from store", message);
+            // console.log("message set from store", message);
             this.message = message;
         },
 

@@ -52,7 +52,7 @@
     const { handleSubmit, values } = useForm<FormSchema>({
         validationSchema: zodResolver,
         initialValues: {
-            type: "personal",
+            type: "contact",
         },
     });
 

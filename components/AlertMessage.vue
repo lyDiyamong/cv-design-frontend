@@ -21,7 +21,7 @@ const alertStore = useAlertStore();
 
 <style scoped>
 .custom-alert {
-    position: absolute;
+    position: fixed;
     top: 1rem;
     left: 50%;
     transform: translateX(-50%);

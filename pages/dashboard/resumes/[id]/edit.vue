@@ -4,7 +4,12 @@
         title="Edit Resume"
         :breadcrumb="{ routes }"
     />
-
+    <AlertMessage
+        v-if="alertStore.isVisible"
+        :message="alertStore.message"
+        :type="alertStore.type"
+        :duration="5000"
+    />
     <section>
         <h3>Select Template</h3>
         <div class="template-selection">
@@ -92,10 +97,12 @@
         UpdateReferenceContent,
         UpdateSkillContent,
     } from "~/types/sections";
+    import { useAlertStore } from "~/store/alert";
 
     definePageMeta({
         layout: "dashboard",
     });
+    const alertStore = useAlertStore();
 
     const routes = [
         {
