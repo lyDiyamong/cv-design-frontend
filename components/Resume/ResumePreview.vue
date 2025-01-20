@@ -1,6 +1,8 @@
 <template>
     <div class="right-section">
-        <a-button @click="saveAsPdf" type="primary">Export as PDF</a-button>
+        <div class="button-resume-container">
+            <a-button @click="saveAsPdf" type="primary">Export as PDF</a-button>
+        </div>
         <section
             ref="resumeExport"
             class="resume-template"
@@ -407,6 +409,7 @@
         position: relative;
         width: 1000px;
         height: 1400px;
+        margin-top: 20px;
         background-size: cover;
         background-position: center;
         color: white;

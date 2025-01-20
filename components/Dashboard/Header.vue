@@ -7,17 +7,18 @@
                         <NuxtLink to="/profile">Profile</NuxtLink>
                     </a-menu-item>
                     <a-menu-item key="logout">
-                        <p style="cursor: pointer;" @click="handleLogout" to="/">Logout</p>
+                        <p style="cursor: pointer" @click="handleLogout" to="/">
+                            Logout
+                        </p>
                     </a-menu-item>
                 </a-menu>
             </template>
             <div class="flex-between">
-                <a-avatar class="avatar">
-                    <template #icon>
-                        <UserOutlined v-if="!profileUrl" />
-                    </template>
-                    <NuxtImg :src="profileUrl" alt="Profile" />
-                </a-avatar>
+                <a-avatar
+                    class="user-avatar"
+                    size="large"
+                    :src="profileUrl || defaultImage"
+                />
                 <a-typography-title :level="5"
                     >{{ firstName }} {{ lastName }}</a-typography-title
                 >
@@ -38,6 +39,9 @@
         firstName?: string;
         lastName?: string;
     }>();
+
+    const defaultImage =
+        "https://cv-design-assets-images.s3.ap-southeast-2.amazonaws.com/template/default-profile.png";
 
     const handleLogout = async () => {
         try {
@@ -70,6 +74,19 @@
     }
 
     .avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
         cursor: pointer;
+    }
+
+    .avatar-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 </style>
