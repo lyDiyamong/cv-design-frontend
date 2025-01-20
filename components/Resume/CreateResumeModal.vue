@@ -163,7 +163,7 @@
         border: 1px solid var(--border-color);
     }
     .template-card.selected {
-        border-color: #1890ff;
-        box-shadow: 0 0 8px rgba(24, 144, 255, 0.5);
+        border-color: var(--color-primary-main);
+        box-shadow: 0 0 8px var(--color-primary-light);
     }
 </style>

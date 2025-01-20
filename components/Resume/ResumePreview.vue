@@ -7,12 +7,15 @@
             :style="{ backgroundImage: 'url(' + selectedTemplate + ')' }"
         >
             <!-- Profile Image -->
-            <img
-                class="profile-image"
-                :style="{
-                    backgroundImage: 'url(' + dummyData.profileImage + ')',
-                }"
-            />
+            <a-avatar class="profile-image">
+                <template #icon>
+                    <UserOutlined
+                        :style="{ fontSize: '80px', color: '#ccc' }"
+                        v-if="!personalSection.imgUrl"
+                    />
+                </template>
+                <NuxtImg :src="personalSection.imgUrl" alt="Profile" />
+            </a-avatar>
 
             <!-- Dummy data overlay on resume -->
             <div v-for="section in sections">
@@ -112,7 +115,7 @@
                 <section class="right-container">
                     <section class="summary-section">
                         <h3 class="section-title">About</h3>
-                        <p>{{  }}</p>
+                        <p>{{ personalSection.summary }}</p>
                         <hr />
                     </section>
 
@@ -161,7 +164,9 @@
     import html2canvas from "html2canvas";
     import jsPDF from "jspdf";
     import type { SectionType } from "../../types/sections";
+    import { ProfileOutlined, UserOutlined } from "@ant-design/icons-vue";
     import type {
+        UpdatePersonalContent,
         UpdateSectionType,
         SectionKeys,
         UpdateSectionSchemasTypes,
@@ -202,7 +207,9 @@
         });
     };
 
-    const personalSection = getSectionContent("personal");
+    const personalSection = getSectionContent(
+        "personal"
+    ) as UpdatePersonalContent;
     const skillsSection = getSectionContent("skills");
     const languagesSection = getSectionContent("languages");
     const experiencesSection = getSectionContent("experiences");
@@ -243,114 +250,6 @@
         // Save the PDF
         pdf.save("cv.pdf");
     };
-
-    // Dummy data for the resume
-    const dummyData = reactive({
-        name: "John Doe",
-        jobTitle: "Software Engineer",
-
-        phoneNumber: "(123) 456-7890",
-        email: "samonrotha@gmail.com",
-        address: "Toul Sangkea, Russey Keo, Phnom Penh",
-
-        about: "Experienced software engineer with a passion for developing innovative programs. Skilled in various programming languages, including Vue.js, JavaScript, and Node.js.",
-
-        education:
-            "Bachelor's in Computer Science, XYZ University, 2018 - 2022",
-
-        experience:
-            "Software Developer at ABC Corp (2022 - Present)\nDeveloped web applications using Vue.js and Node.js. Led a team of 3 engineers in project management.",
-
-        skills: [
-            { name: "HTML", level: "Expert" },
-            { name: "CSS", level: "Advanced" },
-            { name: "JavaScript", level: "Expert" },
-            { name: "Vue.js", level: "Advanced" },
-            { name: "Node.js", level: "Intermediate" },
-            { name: "HTML", level: "Expert" },
-            { name: "CSS", level: "Advanced" },
-            { name: "JavaScript", level: "Expert" },
-            { name: "Vue.js", level: "Advanced" },
-            { name: "Node.js", level: "Intermediate" },
-        ],
-
-        languages: [
-            { name: "Khmer", level: "Native" },
-            { name: "English", level: "Advanced" },
-            { name: "Japanese", level: "Advanced" },
-            { name: "Spanish", level: "Advanced" },
-        ],
-
-        references: [
-            {
-                firstName: "Samon",
-                lastName: "Rotha",
-                position: "Codinator",
-                company: "Co Ltd",
-                email: "example@gmail.com",
-                phoneNumber: "+855 72 983 293",
-            },
-            {
-                firstName: "Samon",
-                lastName: "Rotha",
-                position: "Codinator",
-                company: "Co Ltd",
-                email: "example@gmail.com",
-                phoneNumber: "+855 72 983 293",
-            },
-        ],
-
-        experiences: [
-            {
-                jobTitle: "IT Game - SEAGAME 32nd",
-                position: "IT Game Admin",
-                startDate: "23-11-2023",
-                endDate: "23-12-2023",
-            },
-            {
-                jobTitle: "IT Game - SEAGAME 32nd",
-                position: "IT Game Admin",
-                startDate: "23-11-2023",
-                endDate: "23-12-2023",
-            },
-            {
-                jobTitle: "IT Game - SEAGAME 32nd",
-                position: "IT Game Admin",
-                startDate: "23-11-2023",
-                endDate: "23-12-2023",
-            },
-            {
-                jobTitle: "IT Game - SEAGAME 32nd",
-                position: "IT Game Admin",
-                startDate: "23-11-2023",
-                endDate: "23-12-2023",
-            },
-        ],
-
-        educations: [
-            {
-                schoolName: "Russey Keo High School",
-                degreeMajor: "Bachelor Degree",
-                startDate: "23-11-2023",
-                endDate: "23-12-2023",
-            },
-            {
-                schoolName: "Russey Keo High School",
-                degreeMajor: "Bachelor Degree",
-                startDate: "23-11-2023",
-                endDate: "23-12-2023",
-            },
-            {
-                schoolName: "Russey Keo High School",
-                degreeMajor: "Bachelor Degree",
-                startDate: "23-11-2023",
-                endDate: "23-12-2023",
-            },
-        ],
-
-        profileImage:
-            "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg",
-    });
 </script>
 
 <style scoped>
@@ -381,6 +280,9 @@
 
     .profile-image {
         position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         top: 20px;
         left: 60px;
         width: 130px;
@@ -415,7 +317,7 @@
     }
 
     .left-container {
-        width: 460px;
+        width: 30%;
     }
 
     /* .right-container {

@@ -1,13 +1,13 @@
 <template>
     <a-form-item
-        class="w-full"
+        class="full-width"
         :label="label"
         :validate-status="error ? 'error' : ''"
         :help="error"
     >
         <a-input
             :value="value"
-            class="w-full"
+            class="full-width"
             :placeholder="placeholder"
             @input="handleInput"
             @blur="handleBlur"
@@ -34,7 +34,7 @@
         props.name,
         undefined,
         {
-            initialValue: props.initialValue, // Initialize field value from prop
+            initialValue: props.initialValue,
         }
     );
 

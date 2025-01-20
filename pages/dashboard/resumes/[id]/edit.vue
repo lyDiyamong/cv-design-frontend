@@ -127,10 +127,10 @@
     const { data: sections, isLoading } = sectionResumeQuery(resumeId);
 
     // Template selection
-    const template1 =
-        "https://cv-design-assets-images.s3.ap-southeast-2.amazonaws.com/template/ResumeYamong.jpg";
-    const template2 =
-        "https://cv-design-assets-images.s3.ap-southeast-2.amazonaws.com/template/ResumeYamong2.jpg";
+    const template1 = "/images/templates/Template1.png";
+    // "https://cv-design-assets-images.s3.ap-southeast-2.amazonaws.com/template/ResumeYamong.jpg";
+    const template2 = "/images/templates/Template2.png";
+    // "https://cv-design-assets-images.s3.ap-southeast-2.amazonaws.com/template/ResumeYamong2.jpg";
 
     const selectedTemplate = ref(template1);
 

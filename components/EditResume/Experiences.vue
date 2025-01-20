@@ -38,22 +38,16 @@
                         />
                     </a-form-item>
                 </div>
-                <a-form-item label="Responsibility">
-                    <Field
-                        :name="`content.${index}.responsibility`"
-                        as="a-input"
-                        placeholder="Responsibility"
-                    />
-                    <ErrorMessage
-                        :name="`content.${index}.responsibility`"
-                        class="error-message"
-                    />
-                </a-form-item>
 
                 <div class="flex-between">
                     <!-- Start Date -->
+                    <DateInput
+                        :name="`content.${index}.startDate`"
+                        label="Start Date"
+                        :initial-value="props.content[index]?.startDate"
+                    />
 
-                    <a-form-item class="full-width" label="Start Date">
+                    <!-- <a-form-item class="full-width" label="Start Date">
                         <input
                             class="full-width input-date"
                             type="date"
@@ -61,10 +55,15 @@
                             :value="formatDate(props.content[index]?.startDate)"
                             @input="updateStartDate($event, index)"
                         />
-                    </a-form-item>
+                    </a-form-item> -->
 
                     <!-- End Date -->
-                    <a-form-item class="full-width" label="End Date">
+                    <DateInput
+                        :name="`content.${index}.endDate`"
+                        label="End Date"
+                        :initial-value="props.content[index]?.endDate"
+                    />
+                    <!-- <a-form-item class="full-width" label="End Date">
                         <input
                             class="full-width input-date"
                             type="date"
@@ -72,13 +71,14 @@
                             :value="props.content[index]?.endDate"
                             @input="updateEndDate($event, index)"
                         />
-                    </a-form-item>
+                    </a-form-item> -->
                 </div>
 
                 <!-- Description -->
                 <TextArea
-                    :name="`content.${index}.description`"
-                    label="Description"
+                    :name="`content.${index}.responsibility`"
+                    :initial-value="props.content[index].responsibility"
+                    label="responsibility"
                     placeholder="Write a brief description of your responsibilities"
                     :rows="4"
                 />

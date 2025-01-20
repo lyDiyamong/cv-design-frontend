@@ -24,7 +24,7 @@
         name: string;
         label: string;
         placeholder?: string;
-        initialValue?: string; // Accept initial value for the date field
+        initialValue?: string; 
     }
 
     const props = defineProps<Props>();
@@ -37,8 +37,10 @@
         handleBlur,
         setValue,
     } = useField(props.name, undefined, {
-        initialValue: props.initialValue, // Initialize field value from prop
+        initialValue: props.initialValue, 
     });
+
+    console.log("Prop initial vlaue", props.initialValue)
 
     // Watch `initialValue` for changes (optional, in case parent updates it dynamically)
     watch(
@@ -53,8 +55,8 @@
     // Emit input changes back to the parent
     const handleChange = (date: dayjs.Dayjs | null) => {
         const formattedDate = date ? date.format("YYYY-MM-DD") : "";
-        setValue(formattedDate); // Update vee-validate field value
-        emit("update:modelValue", formattedDate); // Notify parent about changes
+        setValue(formattedDate); 
+        emit("update:modelValue", formattedDate);
     };
 
     // Computed properties for validation state

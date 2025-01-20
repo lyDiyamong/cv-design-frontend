@@ -48,36 +48,39 @@
                             </a-form-item>
                         </div>
 
-                        <div class="form-row">
+                        <div class="flex-between">
                             <!-- Start Date -->
-                            <a-form-item class="full-width" label="Start Date">
-                                <input
-                                    class="full-width input-date"
-                                    type="date"
-                                    :name="`content.${index}.startDate`"
-                                    :value="
-                                        formatDate(
-                                            props.content[index]?.startDate
-                                        )
-                                    "
-                                    @input="updateStartDate($event, index)"
-                                />
-                            </a-form-item>
+                            <DateInput
+                                :name="`content.${index}.startDate`"
+                                label="Start Date"
+                                :initial-value="props.content[index]?.startDate"
+                            />
+
+                            <!-- <a-form-item class="full-width" label="Start Date">
+                        <input
+                            class="full-width input-date"
+                            type="date"
+                            :name="`fields.${index}.startDate`"
+                            :value="formatDate(props.content[index]?.startDate)"
+                            @input="updateStartDate($event, index)"
+                        />
+                    </a-form-item> -->
 
                             <!-- End Date -->
-                            <a-form-item class="full-width" label="End Date">
-                                <input
-                                    class="full-width input-date"
-                                    type="date"
-                                    :name="`content.${index}.endDate`"
-                                    :value="
-                                        formatDate(
-                                            props.content[index]?.endDate
-                                        )
-                                    "
-                                    @input="updateEndDate($event, index)"
-                                />
-                            </a-form-item>
+                            <DateInput
+                                :name="`content.${index}.endDate`"
+                                label="End Date"
+                                :initial-value="props.content[index]?.endDate"
+                            />
+                            <!-- <a-form-item class="full-width" label="End Date">
+                        <input
+                            class="full-width input-date"
+                            type="date"
+                            :name="`content.${index}.endDate`"
+                            :value="props.content[index]?.endDate"
+                            @input="updateEndDate($event, index)"
+                        />
+                    </a-form-item> -->
                         </div>
                     </div>
                     <a-button
