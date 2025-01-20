@@ -10,7 +10,7 @@
         :type="alertStore.type"
         :duration="5000"
     />
-    <!-- <SpinLoading :loading="isLoading" /> -->
+    <SpinLoading :loading="isRefetching" />
 
     <section class="edit-resume-container">
         <section class="form-container">
@@ -124,7 +124,7 @@
     const resumeId = route.params.id as string;
     const { sectionResumeQuery } = useSection();
 
-    const { data: sections, isLoading } = sectionResumeQuery(resumeId);
+    const { data: sections, isLoading, isRefetching } = sectionResumeQuery(resumeId);
 
     // Template selection
     const template1 = "/images/templates/Template1.png";

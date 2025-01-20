@@ -40,8 +40,6 @@
         initialValue: props.initialValue, 
     });
 
-    console.log("Prop initial vlaue", props.initialValue)
-
     // Watch `initialValue` for changes (optional, in case parent updates it dynamically)
     watch(
         () => props.initialValue,

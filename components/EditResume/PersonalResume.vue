@@ -69,6 +69,8 @@
         UpdatePersonalContent
     >();
 
+    const {reset} = updateSectionMutation
+
     const zodResolver = toFieldValidator(formSchema);
     const { handleSubmit } = useForm({
         validationSchema: zodResolver,
