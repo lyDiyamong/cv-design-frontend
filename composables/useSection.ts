@@ -106,7 +106,58 @@ export const useSection = <InputT, ReturnT>() => {
             );
             queryClient.invalidateQueries({
                 queryKey: ["section", resumeId] as const,
-                exact: true, 
+                exact: true,
+            });
+        },
+    });
+    const uploadProfileMutation = useMutation({
+        mutationKey: ["section"],
+        mutationFn: async ({
+            resumeId,
+            formData,
+        }: {
+            resumeId: string;
+            formData: FormData;
+        }) => {
+            const response = await $api.patch<JsonResponseType<SectionType>>(
+                `section/resume-profile/${resumeId}`,
+                formData
+            );
+            return response.data;
+        },
+        onSuccess: (updatedSection, variables) => {
+            const { resumeId } = variables;
+
+            // Update the cached data manually
+            queryClient.setQueryData(
+                ["section", resumeId],
+                (oldData?: JsonResponseType<SectionType[]>) => {
+                    if (!oldData) {
+                        console.log("old data", oldData);
+                        return [];
+                    }
+
+                    // Only update the matching section
+                    const updatedSections = oldData.data.map((section) => {
+                        // Check if the current section matches the updated section
+                        if (
+                            section.resumeId === updatedSection.data.resumeId &&
+                            section.type === updatedSection.data.type
+                        ) {
+                            // Merge the old section with the updated data
+                            return { ...section, ...updatedSection.data };
+                        }
+                        return section;
+                    });
+
+                    // console.log("update section", updatedSections)
+
+                    return updatedSections;
+                }
+            );
+            queryClient.invalidateQueries({
+                queryKey: ["section", resumeId] as const,
+                exact: true,
             });
         },
     });
@@ -114,5 +165,6 @@ export const useSection = <InputT, ReturnT>() => {
     return {
         sectionResumeQuery,
         updateSectionMutation,
+        uploadProfileMutation,
     };
 };

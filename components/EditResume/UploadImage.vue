@@ -1,38 +1,54 @@
 <template>
     <div class="flex-between" style="margin-bottom: 16px">
         <a-upload
-            v-model:file-list="fileList"
             name="avatar"
             list-type="picture-card"
-            class="avatar-uploader"
             :show-upload-list="false"
-            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
             :before-upload="beforeUpload"
             @change="handleChange"
         >
-            <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-            <div v-else>
-                <loading-outlined v-if="loading" />
-                <plus-outlined v-else />
-                <div class="ant-upload-text">Upload</div>
-            </div>
+            <a-spin :spinning="isPending || imageUploading">
+                <div>
+                    <img
+                        v-if="imageUrl"
+                        :src="imageUrl"
+                        alt="avatar"
+                        style="width: 100%"
+                    />
+                    <div v-else>
+                        <a-icon type="plus" />
+                        <div style="margin-top: 8px">Upload</div>
+                    </div>
+                </div>
+            </a-spin>
         </a-upload>
-
-        <a-button style="align-self: flex-end" type="primary">Save</a-button>
     </div>
 </template>
 
 <script lang="ts" setup>
     import { ref } from "vue";
-    import { PlusOutlined, LoadingOutlined } from "@ant-design/icons-vue";
     import { message } from "ant-design-vue";
     import type { UploadChangeParam, UploadFile } from "ant-design-vue";
+    import { useAlertStore } from "../../store/alert";
 
     interface Props {
         imgUrl?: string;
     }
 
     const { imgUrl } = defineProps<Props>();
+    const imageUrl = ref<string | null>(imgUrl || null);
+    const imageUploading = ref(false);
+    const fileList = ref<UploadFile[]>([]); // List of uploaded files
+    const loading = ref<boolean>(false); // Loading state
+
+    const route = useRoute();
+
+    const resumeId = route.params.id as string;
+
+    const { uploadProfileMutation } = useSection();
+    const alertStore = useAlertStore();
+
+    const { isPending } = uploadProfileMutation;
 
     // Improved getBase64 function using Promise and proper type handling
     const getBase64 = (img: Blob): Promise<string> => {
@@ -44,10 +60,6 @@
         });
     };
 
-    const fileList = ref<UploadFile[]>([]); // List of uploaded files
-    const loading = ref<boolean>(false); // Loading state
-    const imageUrl = ref<string>(imgUrl || ""); // To store the base64 image URL
-
     watch(
         () => imgUrl,
         (newUrl) => {
@@ -57,28 +69,41 @@
         }
     );
     // Handle file change, such as upload start, success, and error
-    const handleChange = (info: UploadChangeParam) => {
-        if (info.file.status === "uploading") {
-            loading.value = true;
-            return;
-        }
-        if (info.file.status === "done") {
-            // Get base64 of the uploaded image file
-            if (info.file.originFileObj) {
-                getBase64(info.file.originFileObj as Blob)
-                    .then((base64Url: string) => {
-                        imageUrl.value = base64Url;
-                        loading.value = false;
-                    })
-                    .catch((error) => {
-                        message.error(error); // In case of error in base64 conversion
-                        loading.value = false;
+    const handleChange = async (info: any) => {
+        const file = info.file.originFileObj;
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imageUrl.value = e.target?.result as string;
+            };
+            reader.readAsDataURL(file);
+
+            const formData = new FormData();
+            formData.append("resume-profile", file);
+
+            imageUploading.value = true;
+
+            try {
+                const data = await uploadProfileMutation.mutateAsync({
+                    resumeId: resumeId,
+                    formData,
+                });
+                if (data.message) {
+                    alertStore.showAlert({
+                        message: data.message,
+                        type: "success",
+                        duration: 5000,
                     });
+                }
+            } catch (error: any) {
+                alertStore.showAlert({
+                    message: error.response.data.message,
+                    type: "error",
+                    duration: 5000,
+                });
+            } finally {
+                imageUploading.value = false;
             }
-        }
-        if (info.file.status === "error") {
-            loading.value = false;
-            message.error("Upload error");
         }
     };
 

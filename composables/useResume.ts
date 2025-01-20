@@ -4,8 +4,10 @@ import type { CreateResumeType, ResumeType } from "~/types/resume";
 
 export const useResume = () => {
     const { $api } = useNuxtApp();
+    const queryClient = useQueryClient();
+
     const resumeQueryAll = useQuery({
-        queryKey: ["resume"],
+        queryKey: ["resumes"],
         queryFn: async () => {
             const response = await $api.get<JsonResponseType<ResumeType[]>>(
                 "/resume"
@@ -22,12 +24,35 @@ export const useResume = () => {
                 data
             );
 
-            return response.data
+            return response.data;
         },
+    });
+
+    const deleteResumeMutation = useMutation({
+        mutationKey: ["resumes"],
+        mutationFn: async (resumeId: string) => {
+            const response = await $api.delete<JsonResponseType<undefined>>(
+                `resume/${resumeId}`
+            );
+
+            return response.data;
+        },
+        onSuccess: async () => {
+            await new Promise((resolve) => setTimeout(resolve, 200)); // Delay by 200ms
+            queryClient.invalidateQueries({
+                queryKey: ["resumes"],
+                exact: true,
+            });
+        },
+        // onSuccess: () => {
+        //     queryClient.removeQueries({ queryKey: ["resumes"], exact: true });
+        //     queryClient.fetchQuery({ queryKey: ["resumes"] }); // Force refetch
+        // },
     });
 
     return {
         resumeQueryAll,
         createResumeMutation,
+        deleteResumeMutation,
     };
 };

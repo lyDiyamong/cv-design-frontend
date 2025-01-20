@@ -4,7 +4,7 @@
         <CreateResumeModal />
     </div>
     <section class="resumes-page-container">
-        <SpinLoading :loading="isLoading" />
+        <SpinLoading :loading="isRefetching || isLoading " />
         <a-row :gutter="[48, 16]">
             <a-col
                 :xs="24"
@@ -15,12 +15,11 @@
                 v-for="resume in resumes?.data"
                 :key="resume._id"
             >
-                <NuxtLink :to="`resumes/${resume._id}/edit`">
-                    <ResumeCard
-                        :preview-img="resume.previewImg"
-                        :title="resume.title"
-                    />
-                </NuxtLink>
+                <ResumeCard
+                    :resume-id="resume._id"
+                    :preview-img="resume.previewImg"
+                    :title="resume.title"
+                />
             </a-col>
         </a-row>
 
@@ -44,7 +43,7 @@
 
     const { resumeQueryAll } = useResume();
 
-    const { data: resumes, isLoading } = resumeQueryAll;
+    const { data: resumes, isLoading, isRefetching } = resumeQueryAll;
 
     definePageMeta({
         layout: "dashboard",
