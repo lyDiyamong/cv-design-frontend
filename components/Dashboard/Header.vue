@@ -7,7 +7,7 @@
                         <NuxtLink to="/profile">Profile</NuxtLink>
                     </a-menu-item>
                     <a-menu-item key="logout">
-                        <NuxtLink to="/logout">Logout</NuxtLink>
+                        <p style="cursor: pointer;" @click="handleLogout" to="/">Logout</p>
                     </a-menu-item>
                 </a-menu>
             </template>
@@ -28,12 +28,37 @@
 
 <script setup lang="ts">
     import { UserOutlined } from "@ant-design/icons-vue";
+    import { useAlertStore } from "~/store/alert";
+
+    const alertStore = useAlertStore();
+    const { logoutMutation } = useAuth();
     // Define props with explicit types
     const { profileUrl } = defineProps<{
         profileUrl?: string;
         firstName?: string;
         lastName?: string;
     }>();
+
+    const handleLogout = async () => {
+        try {
+            const data = await logoutMutation.mutateAsync();
+
+            if (data) {
+                alertStore.showAlert({
+                    message: data.message,
+                    type: "success",
+                    duration: 5000,
+                });
+                navigateTo("/");
+            }
+        } catch (error: any) {
+            alertStore.showAlert({
+                message: error.response.data.message,
+                type: "error",
+                duration: 5000,
+            });
+        }
+    };
 </script>
 
 <style scoped>
