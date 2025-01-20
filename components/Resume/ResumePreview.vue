@@ -8,13 +8,18 @@
         >
             <!-- Profile Image -->
             <a-avatar class="profile-image">
-                <template #icon>
-                    <UserOutlined
-                        :style="{ fontSize: '80px', color: '#ccc' }"
-                        v-if="!personalSection.imgUrl"
+                <template v-if="personalSection?.imgUrl">
+                    <NuxtImg
+                        :src="personalSection?.imgUrl"
+                        alt="Profile"
+                        crossorigin="anonymous"
                     />
                 </template>
-                <NuxtImg :src="personalSection.imgUrl" alt="Profile" />
+                <template v-else>
+                    <UserOutlined
+                        :style="{ fontSize: '80px', color: '#ccc' }"
+                    />
+                </template>
             </a-avatar>
 
             <!-- Dummy data overlay on resume -->
@@ -239,6 +244,7 @@
 
     // Reference to the content you want to capture
     const resumeExport = ref<HTMLDivElement | null>(null);
+    const backgroundBase64 = ref("");
 
     // Type guard for narrowing
     function isSectionType<T extends SectionKeys>(
@@ -252,7 +258,7 @@
     }
 
     // Accept `selectedTemplate` as a prop
-    const { sections } = defineProps<{
+    const { sections, selectedTemplate } = defineProps<{
         selectedTemplate: string;
         sections: SectionType[] | undefined;
     }>();
@@ -283,14 +289,69 @@
     const referencesSection = getSectionContent("references");
 
     defineExpose({ resumeExport });
+
+    const convertImageToBase64 = async (imgUrl: string) => {
+        try {
+            const response = await fetch(imgUrl);
+            const contentType = response.headers.get("Content-Type");
+
+            // Check if the image is SVG
+            if (contentType && contentType.includes("svg")) {
+                const svgText = await response.text();
+                // Encode SVG text as base64
+                const base64 = btoa(unescape(encodeURIComponent(svgText)));
+                return `data:image/svg+xml;base64,${base64}`;
+            } else {
+                const blob = await response.blob();
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result as string);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            }
+        } catch (error) {
+            console.error("Error converting image:", error);
+            return null;
+        }
+    };
+
+    const prepareImages = async () => {
+        if (!resumeExport.value) return;
+
+        const images = resumeExport.value.getElementsByTagName("img");
+        await Promise.all(
+            Array.from(images).map(async (img: HTMLImageElement) => {
+                try {
+                    if (!img.src.startsWith("data:image")) {
+                        const base64 = await convertImageToBase64(img.src);
+                        console.log("base64", base64);
+                        if (base64) {
+                            img.src = base64 as string;
+                            await new Promise((resolve, reject) => {
+                                img.onload = resolve;
+                                img.onerror = reject;
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error preparing image:", error);
+                }
+            })
+        );
+    };
+
     const saveAsPdf = async () => {
         if (!resumeExport.value) return;
 
+        // Convert all images to Base64
+        await prepareImages();
+
         // Capture the DOM element as a canvas
         const canvas = await html2canvas(resumeExport.value, {
-            useCORS: true, // Allow cross-origin images
-            backgroundColor: "#fff", // Ensure a white background
-            scale: 2, // High-quality scaling
+            useCORS: true, //
+            backgroundColor: "#fff",
+            scale: 2,
         });
 
         const imgData = canvas.toDataURL("image/png");
@@ -316,6 +377,15 @@
         // Save the PDF
         pdf.save("cv.pdf");
     };
+
+    // On Mounted
+    onMounted(async () => {
+        // Convert the background image to Base64
+        const base64 = await convertImageToBase64(selectedTemplate);
+        if (base64) {
+            backgroundBase64.value = base64 as string;
+        }
+    });
 </script>
 
 <style scoped>
@@ -328,6 +398,8 @@
         position: sticky;
         top: 20px;
         height: 100vh;
+        max-width: 1100px;
+        margin: 0 auto;
         overflow-y: auto;
     }
 
