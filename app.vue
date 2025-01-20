@@ -31,6 +31,9 @@
     *::after {
         box-sizing: inherit;
     }
+    p, h4, h5, h6 {
+        margin: 0 0;
+    }
 
     body {
         margin: 0;

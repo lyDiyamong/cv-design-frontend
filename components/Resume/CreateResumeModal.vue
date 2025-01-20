@@ -7,7 +7,9 @@
             :duration="5000"
         />
         <!-- Create Button -->
-        <a-button type="primary" @click="showModal">Create Resume</a-button>
+        <a-button type="primary" :icon="h(PlusOutlined)" @click="showModal"
+            >Create Resume</a-button
+        >
 
         <!-- Modal Component -->
         <a-modal
@@ -51,6 +53,7 @@
     import { toFieldValidator } from "@vee-validate/zod";
     import * as z from "zod";
     import { useAlertStore } from "../../store/alert";
+    import { PlusOutlined } from "@ant-design/icons-vue";
 
     // Modal visibility state
     const isModalVisible = ref(false);

@@ -1,7 +1,7 @@
 <template>
     <div class="right-section">
         <a-button @click="saveAsPdf" type="primary">Export as PDF</a-button>
-        <div
+        <section
             ref="resumeExport"
             class="resume-template"
             :style="{ backgroundImage: 'url(' + selectedTemplate + ')' }"
@@ -18,21 +18,18 @@
             </a-avatar>
 
             <!-- Dummy data overlay on resume -->
-            <div v-for="section in sections">
-                <section
-                    v-if="isSectionType(section, 'personal')"
-                    class="personal-detail"
-                >
-                    <h2 class="name-section">
-                        {{
-                            `${section.content.firstName} ${section.content.lastName}`
-                        }}
-                    </h2>
-                    <h3 class="title-section">
-                        {{ section.content.position }}
-                    </h3>
-                </section>
-            </div>
+
+            <section class="personal-detail">
+                <h2 class="name-section">
+                    {{
+                        `${personalSection.firstName} ${personalSection.lastName}`
+                    }}
+                </h2>
+                <h3 class="title-section">
+                    {{ personalSection.position }}
+                </h3>
+            </section>
+
             <!-- <section class="personal-detail">
                 <h2 class="name-section">{{ dummyData.name }}</h2>
                 <h3 class="title-section">{{ dummyData.jobTitle }}</h3>
@@ -41,30 +38,35 @@
             <div class="content-container">
                 <!-- The left side of Resume -->
                 <section class="left-container">
-                    <div v-for="section in sections">
-                        <section
-                            v-if="isSectionType(section, 'contact')"
-                            class="contact-section"
-                        >
-                            <h3 class="section-title">Contact Me</h3>
-                            <p>{{ section.content.phone }}</p>
-                            <p>{{ section.content.email }}</p>
-                            <p>{{ section.content.address }}</p>
-                            <hr />
-                        </section>
-                    </div>
+                    <section class="contact-section">
+                        <h3 class="section-title">Contact Me</h3>
+                        <div class="icon-text" v-if="contactSection.phone">
+                            <PhoneOutlined />
+                            <p>{{ contactSection.phone }}</p>
+                        </div>
+                        <div class="icon-text" v-if="contactSection.email">
+                            <GoogleOutlined />
+                            <p>{{ contactSection.email }}</p>
+                        </div>
+                        <div class="icon-text" v-if="contactSection.address">
+                            <HomeOutlined />
+                            <p>{{ contactSection.address }}</p>
+                        </div>
+                        <hr />
+                    </section>
 
                     <section class="skills-section">
                         <h3 class="section-title">Skills</h3>
                         <ul>
                             <li
+                                v-if="skillsSection"
                                 v-for="(skill, index) in skillsSection"
                                 :key="index"
                             >
                                 <span class="skill-name">{{
                                     skill.skill
                                 }}</span>
-                                :
+                                <span v-if="skill.skill && skill.level">:</span>
                                 <span class="skill-level">{{
                                     skill.level
                                 }}</span>
@@ -83,7 +85,9 @@
                                 <span class="language-name">{{
                                     language.language
                                 }}</span>
-                                :
+                                <span v-if="language.language && language.level"
+                                    >:</span
+                                >
                                 <span class="language-level">{{
                                     language.level
                                 }}</span>
@@ -99,13 +103,25 @@
                             v-for="(reference, index) in referencesSection"
                             :key="index"
                         >
-                            <p>
+                            <h5 class="section-subtitle">
                                 {{ reference.firstName }}
                                 {{ reference.lastName }}
-                            </p>
-                            <p>{{ reference.company }}</p>
-                            <p>{{ reference.position }}</p>
-                            <p>{{ reference.email }}</p>
+                            </h5>
+                            <div class="icon-text" v-if="reference.email">
+                                <GoogleOutlined />
+                                <p>{{ reference.email }}</p>
+                            </div>
+                            <div
+                                class="icon-text"
+                                v-if="reference.position && reference.company"
+                            >
+                                <CarryOutOutlined />
+                                <p>
+                                    {{ reference.position }} At
+                                    {{ reference.company }}
+                                </p>
+                            </div>
+
                             <br />
                         </div>
                     </section>
@@ -126,13 +142,35 @@
                             v-for="(experience, index) in experiencesSection"
                             :key="index"
                         >
-                            <p>{{ experience.jobTitle }}</p>
-                            <p>{{ experience.company }}</p>
-                            <p>
-                                {{ experience.startDate }} -
-                                {{ experience.endDate }}
+                            <div class="section-subtitle">
+                                <ForwardOutlined />
+                                <h4>
+                                    {{ experience.jobTitle }}
+                                    <span
+                                        v-if="
+                                            experience.jobTitle &&
+                                            experience.company
+                                        "
+                                        >at</span
+                                    >
+                                    {{ experience.company }}
+                                    <span
+                                        v-if="
+                                            experience.startDate &&
+                                            experience.endDate
+                                        "
+                                        >{{ experience.startDate }} -
+                                        {{ experience.endDate }}</span
+                                    >
+                                </h4>
+                            </div>
+
+                            <p
+                                v-if="experience.responsibility"
+                                class="education"
+                            >
+                                - {{ experience.responsibility }}
                             </p>
-                            <p>{{ experience.responsibility }}</p>
                             <br />
                         </div>
                         <hr />
@@ -145,18 +183,36 @@
                             v-for="(education, index) in educationsSection"
                             :key="index"
                         >
-                            <p>{{ education.school }}</p>
-                            <p>{{ education.degreeMajor }}</p>
-                            <p>
-                                {{ education.startDate }} -
-                                {{ education.endDate }}
-                            </p>
+                            <div class="section-subtitle">
+                                <ForwardOutlined
+                                    :style="{ fontSize: '20px', color: '#000' }"
+                                />
+                                <h4>
+                                    {{ education.degreeMajor }}
+                                    <span
+                                        v-if="
+                                            education.school &&
+                                            education.degreeMajor
+                                        "
+                                        >at</span
+                                    >
+                                    {{ education.school }}
+                                    <span
+                                        v-if="
+                                            education.startDate &&
+                                            education.endDate
+                                        "
+                                        >( {{ education.startDate }} -
+                                        {{ education.endDate }} )</span
+                                    >
+                                </h4>
+                            </div>
                             <br />
                         </div>
                     </section>
                 </section>
             </div>
-        </div>
+        </section>
     </div>
 </template>
 
@@ -164,9 +220,18 @@
     import html2canvas from "html2canvas";
     import jsPDF from "jspdf";
     import type { SectionType } from "../../types/sections";
-    import { ProfileOutlined, UserOutlined } from "@ant-design/icons-vue";
+    import {
+        UserOutlined,
+        GoogleOutlined,
+        PhoneOutlined,
+        HomeOutlined,
+        CarryOutOutlined,
+        ForwardOutlined,
+    } from "@ant-design/icons-vue";
+
     import type {
         UpdatePersonalContent,
+        UpdateContactContent,
         UpdateSectionType,
         SectionKeys,
         UpdateSectionSchemasTypes,
@@ -210,6 +275,7 @@
     const personalSection = getSectionContent(
         "personal"
     ) as UpdatePersonalContent;
+    const contactSection = getSectionContent("contact") as UpdateContactContent;
     const skillsSection = getSectionContent("skills");
     const languagesSection = getSectionContent("languages");
     const experiencesSection = getSectionContent("experiences");
@@ -277,6 +343,12 @@
         flex-direction: column;
         justify-content: flex-start;
     }
+    .icon-text {
+        display: flex;
+        align-items: center;
+        font-size: var(--font-size-body1);
+        gap: 8px;
+    }
 
     .profile-image {
         position: absolute;
@@ -301,15 +373,19 @@
     }
 
     .name-section {
-        font-size: 34px;
+        font-size: 32px;
     }
 
     .personal-detail {
+        position: absolute;
+        top: 20px;
+        left: 110px;
         margin-left: 220px;
         margin-top: 20px;
     }
 
     .content-container {
+        margin-top: 130px;
         display: flex;
         gap: 36px;
         padding: 56px 0;
@@ -320,8 +396,9 @@
         width: 30%;
     }
 
-    /* .right-container {
-  } */
+    .right-container {
+        width: 70%;
+    }
 
     .educations-section p,
     .reference-section p,
@@ -332,7 +409,17 @@
     .education,
     .experience,
     .skills {
-        font-size: 14px;
+        font-size: var(--font-size-body1);
         margin-top: 20px;
+    }
+    .section-title {
+        font-size: var(--font-size-h3);
+    }
+    .section-subtitle {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        font-size: var(--font-size-h4);
+        font-weight: var(--font-weight-bold);
     }
 </style>
