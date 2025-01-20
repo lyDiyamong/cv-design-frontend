@@ -15,7 +15,11 @@
         <a-layout>
             <!-- Optionally add a header -->
             <a-layout-header style="background: white">
-                <Header />
+                <Header
+                    :last-name="userData?.lastName"
+                    :first-name="userData?.firstName"
+                    :profile-url="userData?.imageUrl"
+                />
             </a-layout-header>
 
             <!-- Content area -->
@@ -34,6 +38,8 @@
     const router = useRouter();
     const authStore = useAuthStore();
     const { userQuery } = useUser();
+
+    const { data: userData } = userQuery;
 
     const { isLoading } = userQuery;
 
@@ -57,6 +63,4 @@
         align-items: center;
         justify-content: end;
     }
-
-    
 </style>

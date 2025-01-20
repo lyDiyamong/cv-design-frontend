@@ -18,7 +18,9 @@
                     </template>
                     <NuxtImg :src="profileUrl" alt="Profile" />
                 </a-avatar>
-                <a-typography-title :level="5">Ly Diyamong</a-typography-title>
+                <a-typography-title :level="5"
+                    >{{ firstName }} {{ lastName }}</a-typography-title
+                >
             </div>
         </a-dropdown>
     </div>
@@ -29,11 +31,12 @@
     // Define props with explicit types
     const { profileUrl } = defineProps<{
         profileUrl?: string;
+        firstName?: string;
+        lastName?: string;
     }>();
 </script>
 
 <style scoped>
-
     .header {
         display: flex;
         justify-content: flex-end;
