@@ -13,6 +13,11 @@ export interface User {
     imageUrl: string;
 }
 
+export type UpdateUserType = Pick<
+    User,
+    "firstName" | "lastName" | "gender" | "dateOfBirth"
+>;
+
 export interface Tokens {
     accessToken: string;
     refreshToken: string;
@@ -23,5 +28,5 @@ export type LoginType = z.infer<typeof loginSchema>;
 export type SignupType = z.infer<typeof signUpSchema>;
 
 export interface AuthResponse {
-    data: Tokens
+    data: Tokens;
 }

@@ -30,16 +30,19 @@
         label: string;
         placeholder?: string;
         options: SelectOption[];
+        initialValue?: string; // New prop for initial value
     }
 
     const props = defineProps<SelectInputProps>();
 
+    // Pass initialValue from props to useField
     const {
         value: selectedValue,
         errorMessage,
         handleBlur,
         setValue,
-    } = useField(props.name);
+    } = useField(props.name, undefined, { initialValue: props.initialValue });
+
 
     const error = computed(() => errorMessage.value);
     const validationStatus = computed(() => {
@@ -47,6 +50,7 @@
         return selectedValue.value ? "success" : "";
     });
 
+    // Update the value in vee-validate when the select changes
     const handleChange = (value: string) => {
         setValue(value);
     };

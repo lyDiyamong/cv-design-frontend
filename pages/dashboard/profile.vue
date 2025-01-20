@@ -1,37 +1,50 @@
 <template>
-    <DashboardPageHeader
-        title="Profile"
-        subTitle="Create your Profile to find a job"
-        :breadcrumbRoutes="routes"
+    <a-page-header title="Profile" />
+    <AlertMessage
+        v-if="alertStore.isVisible"
+        :message="alertStore.message"
+        :type="alertStore.type"
+        :duration="5000"
+    />
+    <SpinLoading
+        :loading="
+            isLoading || isRefetching || imageUploadLoading || updateUserLoading
+        "
     />
     <div class="profile-container">
         <a-row justify="center" class="profile-content-wrapper">
             <!-- Profile Card -->
             <div class="profile-card">
-                <div class="profile-avatar-wrapper">
-                    <a-avatar
-                        class="profile-avatar"
-                        :size="100"
-                        :src="profileImage || defaultImage"
-                    />
-                    <div class="upload-icon" @click="triggerFileUpload">
-                        <CameraFilled />
+                <a-spin :spinning="imageUploadLoading">
+                    <div class="profile-avatar-wrapper">
+                        <a-avatar
+                            class="profile-avatar primary-border-color"
+                            :size="100"
+                            :src="
+                                profileImage ||
+                                userData?.imageUrl ||
+                                defaultImage
+                            "
+                        />
+                        <div class="upload-icon" @click="triggerFileUpload">
+                            <CameraFilled />
+                        </div>
+                        <input
+                            type="file"
+                            ref="fileInput"
+                            accept="image/*"
+                            style="display: none"
+                            @change="handleFileChange"
+                        />
                     </div>
-                    <input
-                        type="file"
-                        ref="fileInput"
-                        accept="image/*"
-                        style="display: none"
-                        @change="handleFileChange"
-                    />
-                </div>
+                </a-spin>
                 <div>
-                    <h3>Mong</h3>
-                    <p class="sub-title">samonrotha@gmail.com</p>
+                    <h3>{{ userData?.firstName }} {{ userData?.lastName }}</h3>
+                    <p class="sub-title">{{ userData?.email }}</p>
                     <div class="action-buttons">
-                        <a-button danger class="delete-button"
-                            >Delete Profile</a-button
-                        >
+                        <a-button type="primary" danger class="delete-button">
+                            Delete Profile
+                        </a-button>
                     </div>
                 </div>
             </div>
@@ -44,16 +57,18 @@
                     class="details-form"
                     @submit.prevent="onSubmit"
                 >
-                    <section class="flex-form-group">
+                    <section class="flex-between">
                         <!-- First Name -->
                         <Input
                             name="firstName"
+                            :initial-value="userData?.firstName"
                             placeholder="First Name"
                             label="First Name"
                         />
                         <!-- Last Name -->
                         <Input
                             name="lastName"
+                            :initial-value="userData?.lastName"
                             placeholder="Last Name"
                             label="Last Name"
                         />
@@ -61,32 +76,19 @@
 
                     <div class="flex-form-group">
                         <!-- Gender -->
-                        <a-form-item
-                            class="w-full"
+                        <SelectInput
+                            name="gender"
+                            :options="genderOptions"
                             label="Gender"
-                            :validate-status="errors.gender ? 'error' : ''"
-                            :help="errors.gender"
-                        >
-                            <a-select
-                                v-model:value="gender"
-                                placeholder="Select Gender"
-                            >
-                                <a-select-option value="male"
-                                    >Male</a-select-option
-                                >
-                                <a-select-option value="female"
-                                    >Female</a-select-option
-                                >
-                                <a-select-option value="other"
-                                    >Other</a-select-option
-                                >
-                            </a-select>
-                        </a-form-item>
+                            placeholder="Choose your gender"
+                            :initial-value="userData?.gender"
+                        />
 
                         <!-- Date of Birth -->
                         <DateInput
                             name="dateOfBirth"
                             label="Date of Birth"
+                            :initial-value="userData?.dateOfBirth"
                             placeholder="Select your date of birth"
                         />
                     </div>
@@ -99,6 +101,13 @@
                             disabled
                         />
                     </a-form-item>
+
+                    <Input
+                        name="email"
+                        :initial-value="userData?.email"
+                        label="Email"
+                        disabled
+                    />
 
                     <!-- Submit Button -->
                     <a-button
@@ -116,78 +125,101 @@
 
 <script setup lang="ts">
     import { ref } from "vue";
-    import { useForm, useField } from "vee-validate";
+    import { useForm } from "vee-validate";
     import { toFieldValidator } from "@vee-validate/zod";
     import * as z from "zod";
     import { CameraFilled } from "@ant-design/icons-vue";
 
-    // Breadcrumb routes
-    const routes = [{ path: "index", breadcrumbName: "Profile" }];
+    import { useAlertStore } from "../../store/alert";
 
-    // Profile image and gender
-    // const profileImage = ref(null);
+    const { userQuery, updateUserMutation, updateProfileUser } = useUser();
+    const alertStore = useAlertStore();
+
+    const { isPending: imageUploadLoading } = updateProfileUser;
+    const { isPending: updateUserLoading } = updateUserMutation;
+
+    const { data: userData, isLoading, isRefetching } = userQuery;
+
+    const genderOptions = [
+        { value: "Male", label: "Male" },
+        { value: "Female", label: "Female" },
+    ];
+
     const defaultImage =
         "https://m.media-amazon.com/images/M/MV5BNWI4ZTJiZmUtZGI5MC00NTk4LTk2OTYtNDU3NTJiM2QxNzM0XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg";
 
-    // Profile image state
     const profileImage = ref<string | null>(null);
 
-    // Define schema with Zod
-    const schema = z.object({
-        firstName: z.string().min(1, "First name is required"),
-        lastName: z.string().min(1, "Last name is required"),
-        gender: z.enum(["male", "female", "other"], {
-            message: "Gender is required",
-        }),
-        dateOfBirth: z.string().min(1, "Date of Birth is required"),
-    });
-
-    // Initialize the form
-    const { handleSubmit, errors } = useForm({
-        validationSchema: toFieldValidator(schema),
-    });
-
-    const { value: gender } = useField("gender");
-
-    const { userQuery } = useUser();
-
-    const router = useRouter();
-
-    // Redirect logic
-    watchEffect(() => {
-        if (userQuery.isLoading.value) return; // Wait for the query to finish loading
-
-        if (userQuery.error.value || !userQuery.data.value) {
-            console.error("User not authenticated or an error occurred.");
-            router.push("/login");
-        }
-    });
-
     // File upload handling
-    const handleFileChange = (event: Event) => {
+    const handleFileChange = async (event: Event) => {
         const file = (event.target as HTMLInputElement).files?.[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = () => {
-                profileImage.value = reader.result as string; // Ensure profileImage can accept a string
+                profileImage.value = reader.result as string;
             };
             reader.readAsDataURL(file);
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const data = await updateProfileUser.mutateAsync(formData);
+                if (data.message) {
+                    alertStore.showAlert({
+                        message: data.message,
+                        type: "success",
+                        duration: 5000,
+                    });
+                }
+            } catch (error: any) {
+                alertStore.showAlert({
+                    message: error.response.data.message,
+                    type: "error",
+                    duration: 5000,
+                });
+            }
         }
     };
 
-    // Trigger file upload
     const triggerFileUpload = () => {
         const fileInput = document.querySelector(
             "input[type='file']"
         ) as HTMLInputElement | null;
         if (fileInput) {
-            fileInput.click(); // Safely call the click method
+            fileInput.click();
         }
     };
 
-    // Handle form submission
-    const onSubmit = handleSubmit((formValues) => {
-        console.log("Form submitted successfully:", formValues);
+    const schema = z.object({
+        firstName: z.string().min(1, "First name is required"),
+        lastName: z.string().min(1, "Last name is required"),
+        gender: z.enum(["Male", "Female"], { message: "Gender is required" }),
+        dateOfBirth: z.string().min(1, "Date of Birth is required"),
+    });
+
+    const { handleSubmit } = useForm({
+        validationSchema: toFieldValidator(schema),
+    });
+
+    const onSubmit = handleSubmit(async (formValues) => {
+        try {
+            const data = await updateUserMutation.mutateAsync(formValues);
+
+            if (data.message) {
+                alertStore.showAlert({
+                    message: data.message,
+                    type: "success",
+                    duration: 5000,
+                });
+            }
+        } catch (error: any) {
+            alertStore.showAlert({
+                message: error.response.data.message,
+                type: "error",
+                duration: 5000,
+            });
+        }
     });
 
     definePageMeta({
