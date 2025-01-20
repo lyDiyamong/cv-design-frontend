@@ -101,9 +101,23 @@ export const useUser = () => {
         },
     })
 
+   const deleteProfileUser = useMutation({
+    mutationFn: async () => {
+        const response = await $api.delete<JsonResponseType<User>>('/user/profile-image')
+        return response.data
+    },
+    onSuccess: () => {
+        queryClient.invalidateQueries({
+            queryKey: ["user"] as const,
+            exact: true, 
+        });
+    },
+   }) 
+
     return {
         userQuery,
         updateUserMutation,
-        updateProfileUser
+        updateProfileUser,
+        deleteProfileUser
     };
 };

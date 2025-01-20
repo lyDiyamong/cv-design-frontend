@@ -8,7 +8,11 @@
     />
     <SpinLoading
         :loading="
-            isLoading || isRefetching || imageUploadLoading || updateUserLoading
+            isLoading ||
+            isRefetching ||
+            imageUploadLoading ||
+            updateUserLoading ||
+            deleteUserLoading
         "
     />
     <div class="profile-container">
@@ -42,7 +46,7 @@
                     <h3>{{ userData?.firstName }} {{ userData?.lastName }}</h3>
                     <p class="sub-title">{{ userData?.email }}</p>
                     <div class="action-buttons">
-                        <a-button type="primary" danger class="delete-button">
+                        <a-button type="primary" @click="handleDeleteProfile" danger class="delete-button">
                             Delete Profile
                         </a-button>
                     </div>
@@ -132,11 +136,17 @@
 
     import { useAlertStore } from "../../store/alert";
 
-    const { userQuery, updateUserMutation, updateProfileUser } = useUser();
+    const {
+        userQuery,
+        updateUserMutation,
+        updateProfileUser,
+        deleteProfileUser,
+    } = useUser();
     const alertStore = useAlertStore();
 
     const { isPending: imageUploadLoading } = updateProfileUser;
     const { isPending: updateUserLoading } = updateUserMutation;
+    const { isPending: deleteUserLoading } = deleteProfileUser;
 
     const { data: userData, isLoading, isRefetching } = userQuery;
 
@@ -146,7 +156,7 @@
     ];
 
     const defaultImage =
-        "https://m.media-amazon.com/images/M/MV5BNWI4ZTJiZmUtZGI5MC00NTk4LTk2OTYtNDU3NTJiM2QxNzM0XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg";
+        "https://cv-design-assets-images.s3.ap-southeast-2.amazonaws.com/template/default-profile.png";
 
     const profileImage = ref<string | null>(null);
 
@@ -221,6 +231,25 @@
             });
         }
     });
+
+    const handleDeleteProfile = async () => {
+        try {
+            const data = await deleteProfileUser.mutateAsync();
+            if (data.message) {
+                alertStore.showAlert({
+                    message: data.message,
+                    type: "success",
+                    duration: 5000,
+                });
+            }
+        } catch (error: any) {
+            alertStore.showAlert({
+                message: error.response.data.message,
+                type: "error",
+                duration: 5000,
+            });
+        }
+    };
 
     definePageMeta({
         layout: "dashboard",
